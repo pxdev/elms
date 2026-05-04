@@ -1,0 +1,185 @@
+{
+  "app": {
+    "title": "elms",
+    "description": "نموذج بداية كامل المكدس باستخدام Nuxt 4 و Nuxt UI و Prisma و better-sqlite3 و nuxt-auth-utils.",
+    "footer": "مبني باستخدام Nuxt UI"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "courses": "الدورات",
+    "enrollments": "تسجيلاتي",
+    "admin": "الإدارة"
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم",
+    "timeZone": "المنطقة الزمنية",
+    "phone": "الهاتف",
+    "country": "الدولة",
+    "age": "العمر",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "rememberedPassword": "تذكرت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "google": "المتابعة مع Google",
+    "or": "أو",
+    "login": {
+      "title": "تسجيل الدخول",
+      "description": "مرحباً بعودتك. سجل الدخول إلى حسابك.",
+      "submit": "تسجيل الدخول"
+    },
+    "register": {
+      "title": "إنشاء حسابك",
+      "description": "لا يستغرق سوى بضع ثوانٍ.",
+      "submit": "إنشاء الحساب",
+      "passwordHint": "8 أحرف على الأقل."
+    },
+    "verifyEmail": {
+      "titlePending": "تحقق من بريدك الإلكتروني",
+      "titleOk": "تم التحقق من البريد الإلكتروني",
+      "titleInvalid": "الرابط غير صالح أو منتهي الصلاحية",
+      "checkInbox": "لقد أرسلنا رابط تأكيد إلى {email}. انقر على الرابط لإنهاء التحقق من حسابك.",
+      "confirmed": "تم تأكيد عنوان بريدك الإلكتروني. يمكنك الآن متابعة استخدام حسابك.",
+      "invalid": "رابط التحقق لا يعمل. قد يكون منتهي الصلاحية أو مستخدماً بالفعل.",
+      "resend": "إعادة إرسال الرسالة",
+      "resendSent": "إذا كان العنوان مسجلاً، فقد أُرسل رابط جديد.",
+      "goToDashboard": "الذهاب إلى لوحة التحكم"
+    },
+    "forgotPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "description": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
+      "submit": "إرسال رابط إعادة التعيين",
+      "sentTitle": "تحقق من بريدك الإلكتروني",
+      "sentDescription": "إذا كان هذا العنوان مسجلاً، فقد أُرسل رابط إعادة تعيين كلمة المرور."
+    },
+    "resetPassword": {
+      "title": "اختيار كلمة مرور جديدة",
+      "submit": "تحديث كلمة المرور",
+      "successTitle": "تم تحديث كلمة المرور",
+      "successDescription": "يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
+      "continue": "المتابعة إلى تسجيل الدخول"
+    }
+  },
+  "fields": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "timeZone": "المنطقة الزمنية",
+    "phone": "الهاتف",
+    "country": "الدولة",
+    "age": "العمر",
+    "isActive": "نشط",
+    "emailVerified": "تم التحقق من البريد",
+    "createdAt": "تاريخ الانضمام",
+    "description": "الوصف",
+    "imageUrl": "رابط الصورة",
+    "teacher": "المعلم",
+    "teacherId": "معرف المعلم",
+    "variants": "الخيارات",
+    "variantName": "اسم الخيار",
+    "sessionsPerMonth": "الجلسات/الشهر",
+    "price": "السعر",
+    "status": "الحالة",
+    "student": "الطالب",
+    "course": "الدورة",
+    "enrolledAt": "تاريخ التسجيل",
+    "lsVariantId": "معرف خيار Lemon Squeezy",
+    "amountPaid": "المبلغ المدفوع",
+    "paymentStatus": "حالة الدفع"
+  },
+  "common": {
+    "yes": "نعم",
+    "no": "لا",
+    "actions": "إجراءات",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "add": "إضافة",
+    "delete": "حذف",
+    "manage": "إدارة",
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "signedInAs": "لقد سجلت الدخول كـ {email}.",
+    "profileTitle": "الملف الشخصي المسترد من الخادم",
+    "refresh": "تحديث",
+    "verifyBanner": {
+      "title": "تحقق من بريدك الإلكتروني",
+      "description": "تحقق من صندوق الوارد للحصول على رابط تأكيد لتفعيل حسابك بالكامل.",
+      "resend": "إعادة إرسال الرسالة",
+      "resent": "تم الإرسال!"
+    }
+  },
+  "roles": {
+    "ADMIN": "مدير",
+    "TEACHER": "معلم",
+    "STUDENT": "طالب"
+  },
+  "courses": {
+    "title": "الدورات",
+    "viewDetails": "عرض التفاصيل",
+    "back": "العودة إلى الدورات",
+    "teacher": "المعلم",
+    "variants": "الخطط المتاحة",
+    "sessionsPerMonth": "{count} جلسة/شهر",
+    "enrollNow": "سجل الآن",
+    "payAndEnroll": "ادفع وسجل",
+    "enrolled": "مسجل",
+    "paymentSuccess": "تم الدفع بنجاح! تسجيلك نشط الآن."
+    "signInToEnroll": "سجل الدخول للتسجيل",
+    "notFound": "الدورة غير موجودة",
+    "empty": {
+      "title": "لا توجد دورات متاحة",
+      "description": "تحقق لاحقاً من الدورات الجديدة."
+    }
+  },
+  "enrollments": {
+    "title": "تسجيلاتي",
+    "enrolledAt": "تم التسجيل",
+    "status": {
+      "PENDING": "معلق",
+      "ACTIVE": "نشط",
+      "COMPLETED": "مكتمل",
+      "CANCELLED": "ملغى"
+    },
+    "empty": {
+      "title": "لا توجد تسجيلات بعد",
+      "description": "تصفح الدورات وسجل في إحداها للبدء."
+    },
+    "paymentSuccessTitle": "تم الدفع بنجاح"
+  },
+  "admin": {
+    "courses": {
+      "title": "الدورات",
+      "description": "إدارة الدورات وخياراتها",
+      "create": "إنشاء دورة",
+      "edit": "تعديل الدورة",
+      "confirmDelete": "هل أنت متأكد من حذف هذه الدورة؟",
+      "variantsTitle": "الخيارات"
+    },
+    "enrollments": {
+      "title": "التسجيلات",
+      "description": "إدارة تسجيلات الطلاب"
+    }
+  },
+  "payments": {
+    "status": {
+      "PAID": "مدفوع",
+      "REFUNDED": "مسترد",
+      "PENDING": "معلق"
+    }
+  },
+  "errors": {
+    "required": "{field} مطلوب.",
+    "minPassword": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
+    "generic": "حدث خطأ ما.",
+    "oauth": "فشل تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى."
+  }
+}

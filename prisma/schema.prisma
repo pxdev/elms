@@ -1,0 +1,106 @@
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  name            String?
+  passwordHash    String?
+  googleId        String?   @unique
+  avatarUrl       String?
+  role            Role      @default(STUDENT)
+  timeZone        String?
+  phone           String?
+  country         String?
+  age             Int?
+  isActive        Boolean   @default(true)
+  emailVerified   Boolean   @default(false)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tokens        VerificationToken[]
+  coursesTaught Course[]
+  enrollments   Enrollment[]
+}
+
+model VerificationToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  purpose   String // "email_verify" | "password_reset"
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, purpose])
+}
+
+model Course {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  imageUrl    String?
+  isActive    Boolean         @default(true)
+  teacherId   Int?
+  teacher     User?           @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  variants    CourseVariant[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model CourseVariant {
+  id               Int          @id @default(autoincrement())
+  courseId         Int
+  course           Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  name             String
+  sessionsPerMonth Int
+  price            Decimal      @default(0)
+  lsVariantId      String?
+  isActive         Boolean      @default(true)
+  enrollments      Enrollment[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Enrollment {
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseVariantId Int
+  courseVariant   CourseVariant    @relation(fields: [courseVariantId], references: [id], onDelete: Cascade)
+  status          EnrollmentStatus @default(PENDING)
+  enrolledAt      DateTime         @default(now())
+  lsOrderId       String?          @unique
+  lsCustomerId    String?
+  amountCents     Int?
+  currency        String?
+  paidAt          DateTime?
+  paymentStatus   String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([userId, courseVariantId])
+}

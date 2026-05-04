@@ -1,0 +1,185 @@
+{
+  "app": {
+    "title": "elms",
+    "description": "A Nuxt 4 fullstack starter with Nuxt UI, Prisma, better-sqlite3 and nuxt-auth-utils.",
+    "footer": "Built with Nuxt UI"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "courses": "Courses",
+    "enrollments": "My Enrollments",
+    "admin": "Admin"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "timeZone": "Time zone",
+    "phone": "Phone",
+    "country": "Country",
+    "age": "Age",
+    "confirmPassword": "Confirm password",
+    "newPassword": "New password",
+    "forgotPassword": "Forgot password?",
+    "rememberedPassword": "Remembered your password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "google": "Continue with Google",
+    "or": "or",
+    "login": {
+      "title": "Sign in",
+      "description": "Welcome back. Sign in to your account.",
+      "submit": "Sign in"
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "It only takes a few seconds.",
+      "submit": "Create account",
+      "passwordHint": "At least 8 characters."
+    },
+    "verifyEmail": {
+      "titlePending": "Check your email",
+      "titleOk": "Email verified",
+      "titleInvalid": "Link is invalid or expired",
+      "checkInbox": "We've sent a confirmation link to {email}. Click the link to finish verifying your account.",
+      "confirmed": "Your email address has been confirmed. You can continue using your account.",
+      "invalid": "The verification link didn't work. It may have expired or already been used.",
+      "resend": "Resend the email",
+      "resendSent": "If the address is registered, a new link has been sent.",
+      "goToDashboard": "Go to dashboard"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "description": "Enter your email and we'll send you a reset link.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sentDescription": "If that address is registered, we've sent a password-reset link."
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "submit": "Update password",
+      "successTitle": "Password updated",
+      "successDescription": "You can now sign in with your new password.",
+      "continue": "Continue to sign in"
+    }
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "timeZone": "Time zone",
+    "phone": "Phone",
+    "country": "Country",
+    "age": "Age",
+    "isActive": "Active",
+    "emailVerified": "Email verified",
+    "createdAt": "Joined",
+    "description": "Description",
+    "imageUrl": "Image URL",
+    "teacher": "Teacher",
+    "teacherId": "Teacher ID",
+    "variants": "Variants",
+    "variantName": "Variant name",
+    "sessionsPerMonth": "Sessions per month",
+    "price": "Price",
+    "status": "Status",
+    "student": "Student",
+    "course": "Course",
+    "enrolledAt": "Enrolled at",
+    "lsVariantId": "Lemon Squeezy Variant ID",
+    "amountPaid": "Amount paid",
+    "paymentStatus": "Payment status"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "delete": "Delete",
+    "manage": "Manage",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "signedInAs": "You're signed in as {email}.",
+    "profileTitle": "Server-fetched profile",
+    "refresh": "Refresh",
+    "verifyBanner": {
+      "title": "Verify your email",
+      "description": "Check your inbox for a confirmation link to fully activate your account.",
+      "resend": "Resend email",
+      "resent": "Sent!"
+    }
+  },
+  "roles": {
+    "ADMIN": "Admin",
+    "TEACHER": "Teacher",
+    "STUDENT": "Student"
+  },
+  "courses": {
+    "title": "Courses",
+    "viewDetails": "View details",
+    "back": "Back to courses",
+    "teacher": "Teacher",
+    "variants": "Available plans",
+    "sessionsPerMonth": "{count} sessions/month",
+    "enrollNow": "Enroll now",
+    "payAndEnroll": "Pay & Enroll",
+    "enrolled": "Enrolled",
+    "paymentSuccess": "Payment successful! Your enrollment is now active.",
+    "signInToEnroll": "Sign in to enroll",
+    "notFound": "Course not found",
+    "empty": {
+      "title": "No courses available",
+      "description": "Check back later for new courses."
+    }
+  },
+  "enrollments": {
+    "title": "My Enrollments",
+    "enrolledAt": "Enrolled",
+    "status": {
+      "PENDING": "Pending",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "empty": {
+      "title": "No enrollments yet",
+      "description": "Browse courses and enroll in one to get started."
+    },
+    "paymentSuccessTitle": "Payment successful"
+  },
+  "admin": {
+    "courses": {
+      "title": "Courses",
+      "description": "Manage courses and their variants",
+      "create": "Create course",
+      "edit": "Edit course",
+      "confirmDelete": "Are you sure you want to delete this course?",
+      "variantsTitle": "Variants"
+    },
+    "enrollments": {
+      "title": "Enrollments",
+      "description": "Manage student enrollments"
+    }
+  },
+  "payments": {
+    "status": {
+      "PAID": "Paid",
+      "REFUNDED": "Refunded",
+      "PENDING": "Pending"
+    }
+  },
+  "errors": {
+    "required": "{field} is required.",
+    "minPassword": "Password must be at least 8 characters.",
+    "generic": "Something went wrong.",
+    "oauth": "Google sign-in failed. Please try again."
+  }
+}

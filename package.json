@@ -1,0 +1,39 @@
+{
+  "name": "elms",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --port 3009",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.105",
+    "@iconify-json/simple-icons": "^1.2.80",
+    "@nuxt/ui": "^4.7.1",
+    "@nuxtjs/i18n": "^10.3.0",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@vueuse/nuxt": "^14.3.0",
+    "better-sqlite3": "^12.9.0",
+    "nodemailer": "^8.0.7",
+    "nuxt": "^4.4.2",
+    "nuxt-auth-utils": "^0.5.29",
+    "tailwindcss": "^4.2.4"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.15.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.6.0",
+    "@types/nodemailer": "^8.0.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.3.0",
+    "prisma": "^7.8.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.2.7"
+  }
+}
