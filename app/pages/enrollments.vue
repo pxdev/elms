@@ -2,7 +2,7 @@
 const { t } = useI18n()
 const route = useRoute()
 
-definePageMeta({ authorize: true })
+definePageMeta({ layout: 'dashboard', authorize: true })
 
 useSeoMeta({ title: `${t('enrollments.title')} · ${t('app.title')}` })
 

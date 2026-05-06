@@ -1,3 +1,5 @@
+import { registerSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   const {
     email,
@@ -7,23 +9,7 @@ export default defineEventHandler(async (event) => {
     phone,
     country,
     age
-  } = await readBody<{
-    email?: string
-    password?: string
-    name?: string
-    timeZone?: string
-    phone?: string
-    country?: string
-    age?: number
-  }>(event)
-
-  if (!email || !password) {
-    throw createError({ statusCode: 400, message: 'Email and password are required.' })
-  }
-
-  if (password.length < 8) {
-    throw createError({ statusCode: 400, message: 'Password must be at least 8 characters.' })
-  }
+  } = await parseBody(event, registerSchema)
 
   const existing = await prisma.user.findUnique({ where: { email } })
   if (existing) {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { createCourseSchema } from '~~/shared/schemas'
+
 const { t } = useI18n()
 
 definePageMeta({ authorize: ['ADMIN'] })
@@ -12,8 +14,19 @@ const state = reactive({
   teacherId: undefined as number | undefined
 })
 
+const { data: teachersData } = await useFetch('/api/admin/teachers')
+const teacherItems = computed(() =>
+  (teachersData.value?.teachers ?? []).map((t) => ({
+    label: t.name ? `${t.name} (${t.email})` : t.email,
+    value: t.id
+  }))
+)
+
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
+
+const validate = useZodForm(createCourseSchema)
+const formatZodErrors = useZodErrorFormatter()
 
 async function onSubmit() {
   errorMessage.value = null
@@ -30,8 +43,12 @@ async function onSubmit() {
     })
     await navigateTo('/admin/courses')
   } catch (err: unknown) {
-    const e = err as { data?: { message?: string }, message?: string }
-    errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
+    if (e.data?.issues) {
+      errorMessage.value = formatZodErrors(e.data.issues)
+    } else {
+      errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    }
   } finally {
     loading.value = false
   }
@@ -39,8 +56,8 @@ async function onSubmit() {
 </script>
 
 <template>
-  <UContainer class="py-12">
-    <UCard class="max-w-lg mx-auto">
+  <UContainer class="py-8">
+    <UCard class="border-accented">
       <template #header>
         <h1 class="text-xl font-semibold">
           {{ t('admin.courses.create') }}
@@ -49,6 +66,7 @@ async function onSubmit() {
 
       <UForm
         :state="state"
+        :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >
@@ -59,6 +77,7 @@ async function onSubmit() {
         >
           <UInput
             v-model="state.name"
+            size="xl"
             class="w-full"
             :placeholder="t('fields.name')"
           />
@@ -70,6 +89,7 @@ async function onSubmit() {
         >
           <UTextarea
             v-model="state.description"
+            size="xl"
             class="w-full"
             :placeholder="t('fields.description')"
           />
@@ -79,20 +99,17 @@ async function onSubmit() {
           :label="t('fields.imageUrl')"
           name="imageUrl"
         >
-          <UInput
-            v-model="state.imageUrl"
-            class="w-full"
-            :placeholder="t('fields.imageUrl')"
-          />
+          <AppImageUpload v-model="state.imageUrl" />
         </UFormField>
 
         <UFormField
           :label="t('fields.teacherId')"
           name="teacherId"
         >
-          <UInput
+          <USelect
             v-model="state.teacherId"
-            type="number"
+            :items="teacherItems"
+            size="xl"
             class="w-full"
             :placeholder="t('fields.teacherId')"
           />
@@ -110,6 +127,7 @@ async function onSubmit() {
           <UButton
             type="submit"
             color="primary"
+            size="xl"
             :loading="loading"
             :disabled="loading"
           >
@@ -119,6 +137,7 @@ async function onSubmit() {
             to="/admin/courses"
             variant="ghost"
             color="neutral"
+            size="xl"
           >
             {{ t('common.cancel') }}
           </UButton>

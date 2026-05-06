@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { z } from 'zod'
+
 const { t } = useI18n()
 
 definePageMeta({ guest: true })
@@ -17,15 +19,22 @@ const loading = ref(false)
 const success = ref(false)
 const errorMessage = ref<string | null>(null)
 
+const resetPasswordClientSchema = z.object({
+  password: z.string().min(8),
+  confirm: z.string().min(1)
+}).refine(data => data.password === data.confirm, {
+  message: 'passwords_match',
+  path: ['confirm']
+})
+
+const validate = useZodForm(resetPasswordClientSchema)
+const formatZodErrors = useZodErrorFormatter()
+
 async function onSubmit() {
   errorMessage.value = null
 
   if (!token.value) {
-    errorMessage.value = 'Missing reset token.'
-    return
-  }
-  if (state.password !== state.confirm) {
-    errorMessage.value = 'Passwords do not match.'
+    errorMessage.value = t('errors.validation.invalid')
     return
   }
 
@@ -37,8 +46,12 @@ async function onSubmit() {
     })
     success.value = true
   } catch (err) {
-    const e = err as { data?: { message?: string }, message?: string }
-    errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
+    if (e.data?.issues) {
+      errorMessage.value = formatZodErrors(e.data.issues)
+    } else {
+      errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    }
   } finally {
     loading.value = false
   }
@@ -76,6 +89,7 @@ async function onSubmit() {
       <UForm
         v-else
         :state="state"
+        :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >

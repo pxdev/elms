@@ -1,3 +1,5 @@
+import { updateVariantSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   await requireRole(event, ['ADMIN'])
 
@@ -7,13 +9,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid IDs.' })
   }
 
-  const body = await readBody<{
-    name?: string
-    sessionsPerMonth?: number
-    price?: number
-    isActive?: boolean
-    lsVariantId?: string
-  }>(event)
+  const body = await parseBody(event, updateVariantSchema)
 
   const variant = await prisma.courseVariant.update({
     where: { id: variantId, courseId: id },

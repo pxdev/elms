@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { registerSchema } from '~~/shared/schemas'
+
 const { t } = useI18n()
 
 definePageMeta({ guest: true })
@@ -20,6 +22,9 @@ const state = reactive({
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
 
+const validate = useZodForm(registerSchema)
+const formatZodErrors = useZodErrorFormatter()
+
 async function onSubmit() {
   errorMessage.value = null
   loading.value = true
@@ -31,8 +36,12 @@ async function onSubmit() {
     await refreshSession()
     await navigateTo('/verify-email')
   } catch (err) {
-    const e = err as { data?: { message?: string }, message?: string }
-    errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
+    if (e.data?.issues) {
+      errorMessage.value = formatZodErrors(e.data.issues)
+    } else {
+      errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    }
   } finally {
     loading.value = false
   }
@@ -70,6 +79,7 @@ async function onSubmit() {
 
       <UForm
         :state="state"
+        :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >

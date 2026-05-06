@@ -1,15 +1,7 @@
-export default defineEventHandler(async (event) => {
-  const { token, password } = await readBody<{
-    token?: string
-    password?: string
-  }>(event)
+import { resetPasswordSchema } from '~~/shared/schemas'
 
-  if (!token || !password) {
-    throw createError({ statusCode: 400, message: 'Token and password are required.' })
-  }
-  if (password.length < 8) {
-    throw createError({ statusCode: 400, message: 'Password must be at least 8 characters.' })
-  }
+export default defineEventHandler(async (event) => {
+  const { token, password } = await parseBody(event, resetPasswordSchema)
 
   const userId = await consumeToken(token, 'password_reset')
   const passwordHash = await hashPassword(password)

@@ -2,6 +2,9 @@
   "name": "elms",
   "private": true,
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3009",
@@ -22,7 +25,8 @@
     "nodemailer": "^8.0.7",
     "nuxt": "^4.4.2",
     "nuxt-auth-utils": "^0.5.29",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",

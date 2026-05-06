@@ -1,3 +1,5 @@
+import { createVariantSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   await requireRole(event, ['ADMIN'])
 
@@ -6,19 +8,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid course ID.' })
   }
 
-  const body = await readBody<{
-    name?: string
-    sessionsPerMonth?: number
-    price?: number
-    lsVariantId?: string
-  }>(event)
-
-  if (!body.name || body.name.trim().length === 0) {
-    throw createError({ statusCode: 400, message: 'Variant name is required.' })
-  }
-  if (body.sessionsPerMonth === undefined || body.sessionsPerMonth < 1) {
-    throw createError({ statusCode: 400, message: 'Sessions per month must be at least 1.' })
-  }
+  const body = await parseBody(event, createVariantSchema)
 
   const variant = await prisma.courseVariant.create({
     data: {

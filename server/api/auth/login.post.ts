@@ -1,12 +1,7 @@
-export default defineEventHandler(async (event) => {
-  const { email, password } = await readBody<{
-    email?: string
-    password?: string
-  }>(event)
+import { loginSchema } from '~~/shared/schemas'
 
-  if (!email || !password) {
-    throw createError({ statusCode: 400, message: 'Email and password are required.' })
-  }
+export default defineEventHandler(async (event) => {
+  const { email, password } = await parseBody(event, loginSchema)
 
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user || !user.passwordHash) {

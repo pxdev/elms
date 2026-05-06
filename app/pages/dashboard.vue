@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-definePageMeta({ authorize: true })
+definePageMeta({ layout: 'dashboard', authorize: true })
 
 useSeoMeta({ title: `${t('dashboard.title')} · ${t('app.title')}` })
 

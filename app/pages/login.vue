@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { loginSchema } from '~~/shared/schemas'
+
 const { t } = useI18n()
 
 definePageMeta({ guest: true })
@@ -14,6 +16,9 @@ const state = reactive({
 
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
+
+const validate = useZodForm(loginSchema)
+const formatZodErrors = useZodErrorFormatter()
 
 const route = useRoute()
 if (route.query.error === 'oauth') {
@@ -31,8 +36,12 @@ async function onSubmit() {
     await refreshSession()
     await navigateTo('/dashboard')
   } catch (err) {
-    const e = err as { data?: { message?: string }, message?: string }
-    errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
+    if (e.data?.issues) {
+      errorMessage.value = formatZodErrors(e.data.issues)
+    } else {
+      errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    }
   } finally {
     loading.value = false
   }
@@ -70,6 +79,7 @@ async function onSubmit() {
 
       <UForm
         :state="state"
+        :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >

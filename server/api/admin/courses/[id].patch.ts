@@ -1,3 +1,7 @@
+import { unlink } from 'node:fs/promises'
+import { join } from 'node:path'
+import { updateCourseSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   await requireRole(event, ['ADMIN'])
 
@@ -6,13 +10,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid course ID.' })
   }
 
-  const body = await readBody<{
-    name?: string
-    description?: string
-    imageUrl?: string
-    teacherId?: number | null
-    isActive?: boolean
-  }>(event)
+  const body = await parseBody(event, updateCourseSchema)
+
+  const existing = await prisma.course.findUnique({
+    where: { id },
+    select: { imageUrl: true }
+  })
 
   const course = await prisma.course.update({
     where: { id },
@@ -24,6 +27,17 @@ export default defineEventHandler(async (event) => {
       isActive: body.isActive
     }
   })
+
+  const oldImageUrl = existing?.imageUrl
+  const newImageUrl = body.imageUrl?.trim()
+  if (oldImageUrl && oldImageUrl.startsWith('/uploads/') && oldImageUrl !== newImageUrl) {
+    const filePath = join(process.cwd(), 'public', oldImageUrl)
+    try {
+      await unlink(filePath)
+    } catch {
+      // File may not exist; ignore
+    }
+  }
 
   return { course }
 })

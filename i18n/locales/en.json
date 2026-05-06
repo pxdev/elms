@@ -11,7 +11,9 @@
     "signOut": "Sign out",
     "courses": "Courses",
     "enrollments": "My Enrollments",
-    "admin": "Admin"
+    "admin": "Admin",
+    "profile": "Profile",
+    "search": "Search..."
   },
   "auth": {
     "email": "Email",
@@ -98,8 +100,10 @@
     "no": "No",
     "actions": "Actions",
     "save": "Save",
+    "saved": "Saved successfully.",
     "cancel": "Cancel",
     "add": "Add",
+    "edit": "Edit",
     "delete": "Delete",
     "manage": "Manage",
     "active": "Active",
@@ -162,7 +166,8 @@
       "create": "Create course",
       "edit": "Edit course",
       "confirmDelete": "Are you sure you want to delete this course?",
-      "variantsTitle": "Variants"
+      "variantsTitle": "Variants",
+      "noVariants": "No variants yet."
     },
     "enrollments": {
       "title": "Enrollments",
@@ -180,6 +185,16 @@
     "required": "{field} is required.",
     "minPassword": "Password must be at least 8 characters.",
     "generic": "Something went wrong.",
-    "oauth": "Google sign-in failed. Please try again."
+    "oauth": "Google sign-in failed. Please try again.",
+    "validation": {
+      "invalid_email": "Invalid email address.",
+      "invalid_url": "Invalid URL.",
+      "min_string": "Must be at least {min} characters.",
+      "min_number": "Must be at least {min}.",
+      "positive_number": "Must be a positive number.",
+      "passwords_match": "Passwords do not match.",
+      "required": "This field is required.",
+      "invalid": "Invalid value."
+    }
   }
 }

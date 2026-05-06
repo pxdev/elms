@@ -1,10 +1,9 @@
+import { checkoutSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const body = await readBody<{ variantId?: number }>(event)
-  if (!body.variantId) {
-    throw createError({ statusCode: 400, message: 'Course variant is required.' })
-  }
+  const body = await parseBody(event, checkoutSchema)
 
   const variant = await prisma.courseVariant.findUnique({
     where: { id: body.variantId, isActive: true },

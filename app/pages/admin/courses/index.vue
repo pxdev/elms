@@ -1,123 +1,73 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
+
 const { t } = useI18n()
 
 definePageMeta({ authorize: ['ADMIN'] })
 
-useSeoMeta({ title: `${t('admin.courses.title')} · ${t('app.title')}` })
+useSeoMeta({ title: `${t('admin.courses.title')} · ${t('nav.admin')} · ${t('app.title')}` })
 
-const { data, refresh, status } = await useFetch('/api/courses')
-const courses = computed(() => data.value?.courses ?? [])
+const { data, refresh } = await useFetch('/api/admin/courses')
 
+const page = ref(1)
+const pageSize = ref(10)
+const search = ref('')
 const deleting = ref<number | null>(null)
 
-async function removeCourse(id: number) {
+const filtered = computed(() => {
+  if (!search.value) return data.value?.courses ?? []
+  const q = search.value.toLowerCase()
+  return (data.value?.courses ?? []).filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    (c.teacher?.name?.toLowerCase() ?? '').includes(q)
+  )
+})
+
+async function onDelete(id: number) {
   if (!confirm(t('admin.courses.confirmDelete'))) return
   deleting.value = id
   try {
     await $fetch(`/api/admin/courses/${id}`, { method: 'DELETE' })
     await refresh()
-  } catch (err: unknown) {
-    const e = err as { data?: { message?: string }, message?: string }
-    alert(e.data?.message ?? e.message ?? t('errors.generic'))
   } finally {
     deleting.value = null
   }
 }
+
+const columns = computed<TableColumn<any>[]>(() => [
+  { accessorKey: 'name', header: t('fields.name') },
+  { accessorKey: 'teacher.name', header: t('fields.teacher'), cell: ({ row }) => h('span', {}, row.original.teacher?.name ?? '-') },
+  { accessorKey: 'variants', header: t('fields.variants'), cell: ({ row }) => h('span', {}, row.original.variants?.length ?? 0) },
+  { accessorKey: 'isActive', header: t('fields.status'), cell: ({ row }) => {
+    const Badge = resolveComponent('UBadge') as any
+    return h(Badge, { label: row.getValue('isActive') ? t('common.active') : t('common.inactive'), color: row.getValue('isActive') ? 'success' : 'neutral', variant: 'subtle', size: 'sm' })
+  } },
+  {
+    id: 'actions',
+    header: t('common.actions'),
+    cell: ({ row }) => {
+      const Btn = resolveComponent('UButton') as any
+      return h('div', { class: 'flex gap-1' }, [
+        h(Btn, { size: 'xs', color: 'neutral', variant: 'ghost', icon: 'i-lucide-pencil', to: `/admin/courses/${row.original.id}/edit` }),
+        h(Btn, { size: 'xs', color: 'error', variant: 'ghost', icon: 'i-lucide-trash', loading: deleting.value === row.original.id, onClick: () => onDelete(row.original.id) })
+      ])
+    }
+  }
+])
 </script>
 
 <template>
-  <UContainer class="py-12 space-y-6">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold">
-        {{ t('admin.courses.title') }}
-      </h1>
-      <div class="flex gap-2">
-        <UButton
-          size="xs"
-          color="neutral"
-          variant="ghost"
-          icon="i-lucide-refresh-cw"
-          :loading="status === 'pending'"
-          @click="() => refresh()"
-        >
-          {{ t('dashboard.refresh') }}
-        </UButton>
-        <UButton
-          to="/admin/courses/new"
-          color="primary"
-          icon="i-lucide-plus"
-        >
-          {{ t('admin.courses.create') }}
-        </UButton>
-      </div>
-    </div>
+  <UContainer class="py-8">
+    <div class="space-y-6">
+      <AdminPageHeader :title="t('admin.courses.title')" :description="t('admin.courses.description')" :create-label="t('admin.courses.create')" create-to="/admin/courses/new" />
 
-    <UCard>
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b">
-            <th class="text-left py-2 px-3 font-medium">
-              {{ t('fields.name') }}
-            </th>
-            <th class="text-left py-2 px-3 font-medium">
-              {{ t('fields.teacher') }}
-            </th>
-            <th class="text-left py-2 px-3 font-medium">
-              {{ t('fields.variants') }}
-            </th>
-            <th class="text-left py-2 px-3 font-medium">
-              {{ t('fields.status') }}
-            </th>
-            <th class="text-right py-2 px-3 font-medium">
-              {{ t('common.actions') }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="course in courses"
-            :key="course.id"
-            class="border-b last:border-0"
-          >
-            <td class="py-2 px-3">
-              {{ course.name }}
-            </td>
-            <td class="py-2 px-3">
-              {{ course.teacher?.name ?? '-' }}
-            </td>
-            <td class="py-2 px-3">
-              {{ course.variants?.length ?? 0 }}
-            </td>
-            <td class="py-2 px-3">
-              <UBadge
-                :label="course.isActive ? t('common.active') : t('common.inactive')"
-                :color="course.isActive ? 'success' : 'neutral'"
-                variant="subtle"
-                size="sm"
-              />
-            </td>
-            <td class="py-2 px-3 text-right">
-              <div class="flex justify-end gap-1">
-                <UButton
-                  size="xs"
-                  color="neutral"
-                  variant="ghost"
-                  icon="i-lucide-pencil"
-                  :to="`/admin/courses/${course.id}/edit`"
-                />
-                <UButton
-                  size="xs"
-                  color="error"
-                  variant="ghost"
-                  icon="i-lucide-trash"
-                  :loading="deleting === course.id"
-                  @click="removeCourse(course.id)"
-                />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </UCard>
+      <UCard class="border-accented">
+        <div class="flex items-center gap-2 mb-4">
+          <UInput v-model="search" :placeholder="t('fields.name')" icon="i-lucide-search" size="xl" class="max-w-xs" />
+        </div>
+
+        <AdminDataTable v-model:page="page" v-model:page-size="pageSize" :data="filtered" :columns="columns" />
+      </UCard>
+    </div>
   </UContainer>
 </template>

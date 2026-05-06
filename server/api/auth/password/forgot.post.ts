@@ -1,8 +1,7 @@
+import { forgotPasswordSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
-  const { email } = await readBody<{ email?: string }>(event)
-  if (!email) {
-    throw createError({ statusCode: 400, message: 'Email is required.' })
-  }
+  const { email } = await parseBody(event, forgotPasswordSchema)
 
   const user = await prisma.user.findUnique({ where: { email } })
 

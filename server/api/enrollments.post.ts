@@ -1,13 +1,9 @@
+import { enrollmentSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const body = await readBody<{
-    courseVariantId?: number
-  }>(event)
-
-  if (!body.courseVariantId) {
-    throw createError({ statusCode: 400, message: 'Course variant is required.' })
-  }
+  const body = await parseBody(event, enrollmentSchema)
 
   const variant = await prisma.courseVariant.findUnique({
     where: { id: body.courseVariantId, isActive: true },

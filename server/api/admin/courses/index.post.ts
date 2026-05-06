@@ -1,16 +1,9 @@
+import { createCourseSchema } from '~~/shared/schemas'
+
 export default defineEventHandler(async (event) => {
   await requireRole(event, ['ADMIN'])
 
-  const body = await readBody<{
-    name?: string
-    description?: string
-    imageUrl?: string
-    teacherId?: number
-  }>(event)
-
-  if (!body.name || body.name.trim().length === 0) {
-    throw createError({ statusCode: 400, message: 'Course name is required.' })
-  }
+  const body = await parseBody(event, createCourseSchema)
 
   const course = await prisma.course.create({
     data: {

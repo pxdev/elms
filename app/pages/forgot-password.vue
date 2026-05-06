@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { forgotPasswordSchema } from '~~/shared/schemas'
+
 const { t } = useI18n()
 
 definePageMeta({ guest: true })
@@ -10,6 +12,9 @@ const loading = ref(false)
 const sent = ref(false)
 const errorMessage = ref<string | null>(null)
 
+const validate = useZodForm(forgotPasswordSchema)
+const formatZodErrors = useZodErrorFormatter()
+
 async function onSubmit() {
   errorMessage.value = null
   loading.value = true
@@ -20,8 +25,12 @@ async function onSubmit() {
     })
     sent.value = true
   } catch (err) {
-    const e = err as { data?: { message?: string }, message?: string }
-    errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
+    if (e.data?.issues) {
+      errorMessage.value = formatZodErrors(e.data.issues)
+    } else {
+      errorMessage.value = e.data?.message ?? e.message ?? t('errors.generic')
+    }
   } finally {
     loading.value = false
   }
@@ -52,6 +61,7 @@ async function onSubmit() {
       <UForm
         v-else
         :state="state"
+        :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >

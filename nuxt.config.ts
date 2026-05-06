@@ -33,10 +33,10 @@ export default defineNuxtConfig({
 
   i18n: {
     locales: [
-      { code: 'en', name: 'English', dir: 'ltr' },
-      { code: 'ar', name: 'العربية', dir: 'rtl' }
+      {code: 'en', name: 'English', dir: 'ltr', file: "en.json"},
+      {code: 'ar', name: 'العربية', dir: 'rtl', file: "ar.json"}
     ],
-    // `en` is only the static fallback. detectBrowserLanguage below routes
+     // `en` is only the static fallback. detectBrowserLanguage below routes
     // first-time visitors to `/ar/` or `/en/` based on their browser
     // Accept-Language, then a cookie remembers their explicit choice from
     // the toggle button.

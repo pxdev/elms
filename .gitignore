@@ -29,3 +29,6 @@ logs
 /dev.db-journal
 /prisma/*.db
 /prisma/*.db-journal
+
+# Uploaded files
+/public/uploads
