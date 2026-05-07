@@ -13,6 +13,7 @@
     "enrollments": "تسجيلاتي",
     "admin": "الإدارة",
     "profile": "الملف الشخصي",
+    "blog": "المدونة",
     "search": "بحث..."
   },
   "auth": {
@@ -93,7 +94,18 @@
     "enrolledAt": "تاريخ التسجيل",
     "lsVariantId": "معرف خيار Lemon Squeezy",
     "amountPaid": "المبلغ المدفوع",
-    "paymentStatus": "حالة الدفع"
+    "paymentStatus": "حالة الدفع",
+    "title": "العنوان",
+    "slug": "الرابط",
+    "excerpt": "المقتطف",
+    "published": "منشور",
+    "publishedAt": "تاريخ النشر",
+    "category": "الفئة",
+    "categories": "الفئات",
+    "tag": "الوسم",
+    "tags": "الوسوم",
+    "author": "المؤلف",
+    "posts": "المقالات"
   },
   "common": {
     "yes": "نعم",
@@ -107,7 +119,8 @@
     "delete": "حذف",
     "manage": "إدارة",
     "active": "نشط",
-    "inactive": "غير نشط"
+    "inactive": "غير نشط",
+    "all": "الكل"
   },
   "dashboard": {
     "title": "لوحة التحكم",
@@ -158,6 +171,27 @@
       "description": "تصفح الدورات وسجل في إحداها للبدء."
     },
     "paymentSuccessTitle": "تم الدفع بنجاح"
+  },
+  "blog": {
+    "title": "المدونة",
+    "description": "آخر الأخبار والنصائح والرؤى.",
+    "createPost": "إنشاء مقالة",
+    "editPost": "تعديل المقالة",
+    "posts": "المقالات",
+    "categories": "الفئات",
+    "tags": "الوسوم",
+    "noPosts": "لا توجد مقالات متاحة بعد.",
+    "readMore": "اقرأ المزيد",
+    "draft": "مسودة",
+    "published": "منشور",
+    "confirmDeletePost": "هل أنت متأكد من حذف هذه المقالة؟",
+    "confirmDeleteCategory": "هل أنت متأكد من حذف هذه الفئة؟",
+    "confirmDeleteTag": "هل أنت متأكد من حذف هذا الوسم؟",
+    "backToBlog": "العودة إلى المدونة",
+    "managePosts": "إدارة جميع مقالات المدونة",
+    "manageCategories": "إدارة فئات المدونة",
+    "manageTags": "إدارة وسوم المدونة",
+    "recentPosts": "أحدث المقالات"
   },
   "admin": {
     "courses": {

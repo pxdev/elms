@@ -16,7 +16,8 @@ const navItems = computed(() => {
       { label: t('nav.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
       { label: t('nav.courses'), icon: 'i-lucide-book-open', to: '/admin/courses' },
       { label: t('nav.enrollments'), icon: 'i-lucide-users', to: '/admin/enrollments' },
-      { label: t('fields.name'), icon: 'i-lucide-user-cog', to: '/admin/users' }
+      { label: t('fields.name'), icon: 'i-lucide-user-cog', to: '/admin/users' },
+      { label: t('nav.blog'), icon: 'i-lucide-newspaper', to: '/admin/blog' }
     ]
   }
   if (role === 'TEACHER') {
@@ -55,7 +56,8 @@ const searchGroups = computed(() => {
 
   if (role === 'ADMIN') {
     groups[0].items.push(
-      { label: t('admin.courses.create'), icon: 'i-lucide-plus', to: '/admin/courses/new' }
+      { label: t('admin.courses.create'), icon: 'i-lucide-plus', to: '/admin/courses/new' },
+      { label: t('blog.createPost'), icon: 'i-lucide-plus', to: '/admin/blog/posts/new' }
     )
   }
 

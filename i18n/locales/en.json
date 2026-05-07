@@ -13,6 +13,8 @@
     "enrollments": "My Enrollments",
     "admin": "Admin",
     "profile": "Profile",
+    "blog": "Blog",
+    "blog": "Blog",
     "search": "Search..."
   },
   "auth": {
@@ -93,7 +95,18 @@
     "enrolledAt": "Enrolled at",
     "lsVariantId": "Lemon Squeezy Variant ID",
     "amountPaid": "Amount paid",
-    "paymentStatus": "Payment status"
+    "paymentStatus": "Payment status",
+    "title": "Title",
+    "slug": "Slug",
+    "excerpt": "Excerpt",
+    "published": "Published",
+    "publishedAt": "Published at",
+    "category": "Category",
+    "categories": "Categories",
+    "tag": "Tag",
+    "tags": "Tags",
+    "author": "Author",
+    "posts": "Posts"
   },
   "common": {
     "yes": "Yes",
@@ -107,7 +120,8 @@
     "delete": "Delete",
     "manage": "Manage",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "all": "All"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -158,6 +172,27 @@
       "description": "Browse courses and enroll in one to get started."
     },
     "paymentSuccessTitle": "Payment successful"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Latest news, tips, and insights.",
+    "createPost": "Create post",
+    "editPost": "Edit post",
+    "posts": "Posts",
+    "categories": "Categories",
+    "tags": "Tags",
+    "noPosts": "No posts available yet.",
+    "readMore": "Read more",
+    "draft": "Draft",
+    "published": "Published",
+    "confirmDeletePost": "Are you sure you want to delete this post?",
+    "confirmDeleteCategory": "Are you sure you want to delete this category?",
+    "confirmDeleteTag": "Are you sure you want to delete this tag?",
+    "backToBlog": "Back to blog",
+    "managePosts": "Manage all blog posts",
+    "manageCategories": "Manage blog categories",
+    "manageTags": "Manage blog tags",
+    "recentPosts": "Recent posts"
   },
   "admin": {
     "courses": {
