@@ -82,6 +82,7 @@
     "emailVerified": "Email verified",
     "createdAt": "Joined",
     "description": "Description",
+    "content": "Content",
     "imageUrl": "Image URL",
     "teacher": "Teacher",
     "teacherId": "Teacher ID",
@@ -106,7 +107,17 @@
     "tag": "Tag",
     "tags": "Tags",
     "author": "Author",
-    "posts": "Posts"
+    "posts": "Posts",
+    "totalSessions": "Total sessions",
+    "zoomLink": "Zoom link",
+    "scheduledAt": "Scheduled at",
+    "duration": "Duration",
+    "notes": "Notes",
+    "availability": "Availability",
+    "url": "URL",
+    "type": "Type",
+    "sessions": "Sessions",
+    "isPrivate": "Private"
   },
   "common": {
     "yes": "Yes",
@@ -121,7 +132,13 @@
     "manage": "Manage",
     "active": "Active",
     "inactive": "Inactive",
-    "all": "All"
+    "all": "All",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "back": "Back",
+    "loading": "Loading...",
+    "from": "From",
+    "to": "to"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -165,7 +182,9 @@
       "PENDING": "Pending",
       "ACTIVE": "Active",
       "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "CANCELLED": "Cancelled",
+      "SCHEDULED": "Scheduled",
+      "NO_SHOW": "No show"
     },
     "empty": {
       "title": "No enrollments yet",
@@ -193,6 +212,52 @@
     "manageCategories": "Manage blog categories",
     "manageTags": "Manage blog tags",
     "recentPosts": "Recent posts"
+  },
+  "days": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
+  },
+  "teacher": {
+    "availability": "Availability",
+    "sessions": "Sessions",
+    "calendar": "Calendar",
+    "noAvailability": "No availability set",
+    "availableForBooking": "Available for booking",
+    "availableForBookingHint": "Students can see and book your available time slots",
+    "upcomingAvailability": "Upcoming availability",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "dragHint": "Click and drag to select time slots",
+    "clearWeek": "Clear week",
+    "hoursSelected": "hours selected"
+  },
+  "sessions": {
+    "title": "My Sessions",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "bookSession": "Book session",
+    "noSessions": "No sessions scheduled",
+    "sessionCount": "sessions",
+    "markComplete": "Mark complete",
+    "markNoShow": "Mark no-show",
+    "markCancelled": "Mark cancelled",
+    "maxReached": "You have booked all available sessions",
+    "noAvailability": "Teacher has not set availability",
+    "noSlots": "No available slots",
+    "progress": "Session progress"
+  },
+  "materials": {
+    "title": "Materials",
+    "addMaterial": "Add material",
+    "allMaterials": "All materials",
+    "shared": "Shared",
+    "private": "Private",
+    "noMaterials": "No materials yet"
   },
   "admin": {
     "courses": {
@@ -230,6 +295,9 @@
       "passwords_match": "Passwords do not match.",
       "required": "This field is required.",
       "invalid": "Invalid value."
-    }
+    },
+    "slotTaken": "This time slot is already taken.",
+    "maxSessionsReached": "You have reached the maximum number of sessions.",
+    "invalidSlot": "Invalid time slot."
   }
 }

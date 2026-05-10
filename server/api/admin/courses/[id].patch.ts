@@ -24,7 +24,10 @@ export default defineEventHandler(async (event) => {
       description: body.description?.trim(),
       imageUrl: body.imageUrl?.trim(),
       teacherId: body.teacherId,
-      isActive: body.isActive
+      isActive: body.isActive,
+      price: body.price,
+      totalSessions: body.totalSessions,
+      lsVariantId: body.lsVariantId?.trim()
     }
   })
 

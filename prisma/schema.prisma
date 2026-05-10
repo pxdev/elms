@@ -22,6 +22,19 @@ enum EnrollmentStatus {
   CANCELLED
 }
 
+enum MaterialType {
+  LINK
+  PDF
+  SLIDE
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
 model User {
   id              Int       @id @default(autoincrement())
   email           String    @unique
@@ -32,18 +45,20 @@ model User {
   role            Role      @default(STUDENT)
   timeZone        String?
   phone           String?
-  country         String?
+  country           String?
   age             Int?
-  isActive        Boolean   @default(true)
-  emailVerified   Boolean   @default(false)
+  isActive              Boolean   @default(true)
+  isAvailableForBooking Boolean   @default(true)
+  emailVerified         Boolean   @default(false)
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  tokens        VerificationToken[]
-  coursesTaught Course[]
-  enrollments   Enrollment[]
-  posts         BlogPost[]
+  tokens              VerificationToken[]
+  coursesTaught       Course[]
+  enrollments         Enrollment[]
+  posts               BlogPost[]
+  teacherAvailability TeacherAvailability[]
 }
 
 model VerificationToken {
@@ -60,50 +75,101 @@ model VerificationToken {
 }
 
 model Course {
-  id          Int             @id @default(autoincrement())
-  name        String
-  description String?
-  imageUrl    String?
-  isActive    Boolean         @default(true)
-  teacherId   Int?
-  teacher     User?           @relation(fields: [teacherId], references: [id], onDelete: SetNull)
-  variants    CourseVariant[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id            Int              @id @default(autoincrement())
+  name          String
+  description   String?
+  imageUrl      String?
+  price         Decimal          @default(0)
+  totalSessions Int              @default(4)
+  lsVariantId   String?
+  isActive      Boolean          @default(true)
+  teacherId     Int?
+  teacher       User?            @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  materials     CourseMaterial[]
+  enrollments   Enrollment[]
+  promoCodes    PromoCode[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }
 
-model CourseVariant {
-  id               Int          @id @default(autoincrement())
-  courseId         Int
-  course           Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  name             String
-  sessionsPerMonth Int
-  price            Decimal      @default(0)
-  lsVariantId      String?
-  isActive         Boolean      @default(true)
-  enrollments      Enrollment[]
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+model CourseMaterial {
+  id           Int          @id @default(autoincrement())
+  courseId     Int
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title        String
+  type         MaterialType
+  url          String?
+  filePath     String?
+  isPrivate    Boolean      @default(false)
+  enrollmentId Int?
+  createdAt    DateTime     @default(now())
+}
+
+model TeacherAvailability {
+  id        Int      @id @default(autoincrement())
+  teacherId Int
+  teacher   User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  date      String   // YYYY-MM-DD
+  startTime Int      // minutes from midnight
+  endTime   Int      // minutes from midnight
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teacherId, date])
 }
 
 model Enrollment {
-  id              Int              @id @default(autoincrement())
-  userId          Int
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseVariantId Int
-  courseVariant   CourseVariant    @relation(fields: [courseVariantId], references: [id], onDelete: Cascade)
-  status          EnrollmentStatus @default(PENDING)
-  enrolledAt      DateTime         @default(now())
-  lsOrderId       String?          @unique
-  lsCustomerId    String?
-  amountCents     Int?
-  currency        String?
-  paidAt          DateTime?
-  paymentStatus   String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id            Int              @id @default(autoincrement())
+  userId        Int
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId      Int
+  course        Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  status        EnrollmentStatus @default(PENDING)
+  sessions      Session[]
+  enrolledAt    DateTime         @default(now())
+  lsOrderId     String?          @unique
+  lsCustomerId  String?
+  amountCents   Int?
+  currency      String?
+  paidAt        DateTime?
+  paymentStatus String?
+  promoCodeId   Int?
+  promoCode     PromoCode?       @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
-  @@unique([userId, courseVariantId])
+  @@unique([userId, courseId])
+}
+
+model Session {
+  id              Int           @id @default(autoincrement())
+  enrollmentId    Int
+  enrollment      Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  scheduledAt     DateTime
+  durationMinutes Int           @default(60)
+  zoomLink        String?
+  status          SessionStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model PromoCode {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  description     String?
+  discountPercent Int
+  maxUses         Int?
+  usedCount       Int      @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean  @default(true)
+  courseId        Int?
+  course          Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  lsDiscountId    String?  @unique
+  enrollments     Enrollment[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model BlogCategory {

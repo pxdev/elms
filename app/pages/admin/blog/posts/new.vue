@@ -74,12 +74,7 @@ async function onSubmit() {
 
 <template>
   <UContainer class="py-8">
-    <UCard class="border-accented">
-      <template #header>
-        <h1 class="text-xl font-semibold">
-          {{ t('blog.createPost') }}
-        </h1>
-      </template>
+    <UCard>
 
       <UForm
         :state="state"
@@ -162,7 +157,7 @@ async function onSubmit() {
             v-slot="{ editor }"
             v-model="state.description"
             :placeholder="t('fields.description')"
-            class="w-full"
+            class="w-full min-h-[300px] [&_.ProseMirror]:min-h-[300px] ring-1 ring-default rounded-lg"
           >
             <UEditorToolbar
               :editor="editor"
@@ -213,7 +208,7 @@ async function onSubmit() {
             v-slot="{ editor }"
             v-model="state.content"
             :placeholder="t('fields.content')"
-            class="w-full"
+            class="w-full min-h-[400px] [&_.ProseMirror]:min-h-[400px] ring-1 ring-default rounded-lg"
           >
             <UEditorToolbar
               :editor="editor"

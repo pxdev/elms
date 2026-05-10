@@ -41,9 +41,9 @@ async function onSubmit() {
 <template>
   <UContainer class="py-8">
     <div class="space-y-6">
-      <AdminPageHeader :title="`${t('common.add')} ${t('fields.name')}`" />
 
-      <UCard class="border-accented">
+
+      <UCard>
         <UForm :state="state" class="space-y-4" @submit="onSubmit">
           <UFormField :label="t('fields.email')" name="email" required>
             <UInput v-model="state.email" type="email" size="xl" class="w-full" :placeholder="t('fields.email')" />

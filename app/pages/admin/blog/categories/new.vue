@@ -45,11 +45,11 @@ async function onSubmit() {
 
 <template>
   <UContainer class="py-8">
-    <UCard class="border-accented">
+    <UCard>
       <template #header>
-        <h1 class="text-xl font-semibold">
+        <h2 class="text-lg font-semibold">
           {{ t('common.add') }} {{ t('fields.category') }}
-        </h1>
+        </h2>
       </template>
 
       <UForm

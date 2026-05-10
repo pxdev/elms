@@ -55,38 +55,60 @@ async function handleOrderCreated(args: { lsOrderId: string, attrs: Record<strin
     return { ok: true, unmatched: true, lsOrderId }
   }
 
-  // Find variant by LS variant id
+  // Find course by LS variant id
   const firstOrderItem = (attrs.first_order_item ?? {}) as Record<string, unknown>
   const variantId = String(firstOrderItem.variant_id || attrs.variant_id || '')
-  const variant = variantId ? await prisma.courseVariant.findFirst({ where: { lsVariantId: variantId } }) : null
+  const course = variantId ? await prisma.course.findFirst({ where: { lsVariantId: variantId } }) : null
 
-  if (!variant) {
-    console.warn('[ls-webhook] no variant mapped to LS variant', { variantId, lsOrderId })
+  if (!course) {
+    console.warn('[ls-webhook] no course mapped to LS variant', { variantId, lsOrderId })
     return { ok: true, unmatchedVariant: true, lsOrderId }
   }
 
-  const enrollment = await prisma.enrollment.upsert({
-    where: { userId_courseVariantId: { userId: user.id, courseVariantId: variant.id } },
-    update: {
-      status: 'ACTIVE',
-      lsOrderId,
-      lsCustomerId: String(attrs.customer_id || ''),
-      amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
-      currency: String(attrs.currency || 'USD').toUpperCase(),
-      paidAt: new Date(),
-      paymentStatus: 'PAID'
-    },
-    create: {
-      userId: user.id,
-      courseVariantId: variant.id,
-      status: 'ACTIVE',
-      lsOrderId,
-      lsCustomerId: String(attrs.customer_id || ''),
-      amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
-      currency: String(attrs.currency || 'USD').toUpperCase(),
-      paidAt: new Date(),
-      paymentStatus: 'PAID'
+  // Resolve promo code: prefer custom_data, fallback to LS discount code
+  let promoCodeId: number | undefined
+  const promoCodeStr = custom.promo_code || (attrs.discount_code as string) || ''
+  if (promoCodeStr) {
+    const promo = await prisma.promoCode.findUnique({ where: { code: promoCodeStr.trim().toUpperCase() } })
+    if (promo) promoCodeId = promo.id
+  }
+
+  const enrollment = await prisma.$transaction(async (tx) => {
+    const e = await tx.enrollment.upsert({
+      where: { userId_courseId: { userId: user.id, courseId: course.id } },
+      update: {
+        status: 'ACTIVE',
+        lsOrderId,
+        lsCustomerId: String(attrs.customer_id || ''),
+        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
+        currency: String(attrs.currency || 'USD').toUpperCase(),
+        paidAt: new Date(),
+        paymentStatus: 'PAID',
+        promoCodeId: promoCodeId ?? null
+      },
+      create: {
+        userId: user.id,
+        courseId: course.id,
+        status: 'ACTIVE',
+        lsOrderId,
+        lsCustomerId: String(attrs.customer_id || ''),
+        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
+        currency: String(attrs.currency || 'USD').toUpperCase(),
+        paidAt: new Date(),
+        paymentStatus: 'PAID',
+        promoCodeId: promoCodeId ?? null
+      }
+    })
+
+    // Bump used count if a promo code was applied
+    if (promoCodeId) {
+      await tx.promoCode.update({
+        where: { id: promoCodeId },
+        data: { usedCount: { increment: 1 } }
+      })
     }
+
+    return e
   })
 
   return { ok: true, enrollmentId: enrollment.id }

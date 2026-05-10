@@ -7,3 +7,7 @@ if (loggedIn.value) {
   await navigateTo('/login')
 }
 </script>
+
+<template>
+  <div />
+</template>

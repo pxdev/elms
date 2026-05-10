@@ -18,10 +18,10 @@ const cards = computed(() => [
 <template>
   <UContainer class="py-8">
     <div class="space-y-6">
-      <AdminPageHeader :title="t('nav.admin')" />
+
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <UCard v-for="card in cards" :key="card.label" class="relative overflow-hidden border-accented">
+        <UCard v-for="card in cards" :key="card.label" class="relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-muted-foreground">{{ card.label }}</p>
@@ -35,7 +35,7 @@ const cards = computed(() => [
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <UCard class="border-accented">
+        <UCard>
           <template #header>
             <h3 class="font-semibold">{{ t('roles.TEACHER') }}</h3>
           </template>
@@ -48,7 +48,7 @@ const cards = computed(() => [
           </div>
         </UCard>
 
-        <UCard class="border-accented">
+        <UCard>
           <template #header>
             <h3 class="font-semibold">{{ t('roles.STUDENT') }}</h3>
           </template>
@@ -60,6 +60,21 @@ const cards = computed(() => [
             </div>
           </div>
         </UCard>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <UButton
+          to="/admin/promo-codes"
+          variant="soft"
+          color="primary"
+          class="h-auto py-4 justify-start"
+          icon="i-lucide-ticket-percent"
+        >
+          <div class="text-left">
+            <div class="font-semibold">Promo Codes</div>
+            <div class="text-xs text-muted-foreground">Manage discounts</div>
+          </div>
+        </UButton>
       </div>
     </div>
   </UContainer>

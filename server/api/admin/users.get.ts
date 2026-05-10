@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
       name: true,
       role: true,
       isActive: true,
+      isAvailableForBooking: true,
       emailVerified: true,
       createdAt: true
     },

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 40" fill="none">
+  <!-- Lemon icon -->
+  <g transform="translate(0, 2)">
+    <path d="M18 0C12.5 0 7.5 3.5 5.5 8.5C3 14.5 4.5 21 9 25.5C13.5 30 20 31.5 26 29C31 27 34.5 22 34.5 16.5C34.5 7.4 27.1 0 18 0Z" fill="#FFC233"/>
+    <path d="M18 5C14.2 5 10.8 7.3 9.3 10.8C7.5 15 8.5 19.7 11.8 23C15.1 26.3 19.8 27.3 24 25.5C27.5 24 30 20.6 30 16.8C30 10.3 24.5 5 18 5Z" fill="#FFD76F"/>
+    <ellipse cx="16" cy="15" rx="3" ry="5" transform="rotate(-20 16 15)" fill="#FFC233"/>
+    <ellipse cx="22" cy="17" rx="2.5" ry="4" transform="rotate(10 22 17)" fill="#FFC233"/>
+    <path d="M17 1C17 1 19.5 -1 22 1" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M15 2C15 2 13 -1 11 1" stroke="#4ADE80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  </g>
+  <!-- Text -->
+  <text x="40" y="17" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="15" fill="#1F1F1F" letter-spacing="-0.3">Lemon</text>
+  <text x="40" y="34" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="15" fill="#7047EB" letter-spacing="-0.3">Squeezy</text>
+</svg>

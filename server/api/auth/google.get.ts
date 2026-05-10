@@ -40,8 +40,9 @@ export default defineOAuthGoogleEventHandler({
         phone: user.phone,
         country: user.country,
         age: user.age,
-        isActive: user.isActive
-      },
+        isActive: user.isActive,
+        isAvailableForBooking: user.isAvailableForBooking
+      } as any,
       loggedInAt: Date.now()
     })
 

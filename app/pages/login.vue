@@ -94,7 +94,7 @@ async function onSubmit() {
             autocomplete="email"
             class="w-full"
             :placeholder="t('auth.email')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -116,7 +116,7 @@ async function onSubmit() {
             autocomplete="current-password"
             class="w-full"
             :placeholder="t('auth.password')"
-          />
+          size="xl" />
         </UFormField>
 
         <UAlert
@@ -132,7 +132,7 @@ async function onSubmit() {
           block
           :loading="loading"
           :disabled="loading"
-        >
+         size="xl">
           {{ t('auth.login.submit') }}
         </UButton>
       </UForm>

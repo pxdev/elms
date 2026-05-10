@@ -4,13 +4,10 @@ export default defineEventHandler(async (event) => {
   const enrollments = await prisma.enrollment.findMany({
     where: { userId: user.id },
     include: {
-      courseVariant: {
-        include: {
-          course: {
-            select: { id: true, name: true, description: true, imageUrl: true }
-          }
-        }
-      }
+      course: {
+        select: { id: true, name: true, description: true, imageUrl: true, teacher: { select: { name: true } } }
+      },
+      sessions: true
     },
     orderBy: { enrolledAt: 'desc' }
   })

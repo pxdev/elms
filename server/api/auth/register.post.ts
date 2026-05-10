@@ -54,8 +54,9 @@ export default defineEventHandler(async (event) => {
       phone: user.phone,
       country: user.country,
       age: user.age,
-      isActive: user.isActive
-    },
+      isActive: user.isActive,
+      isAvailableForBooking: user.isAvailableForBooking
+    } as any,
     loggedInAt: Date.now()
   })
 
@@ -69,7 +70,8 @@ export default defineEventHandler(async (event) => {
       phone: user.phone,
       country: user.country,
       age: user.age,
-      isActive: user.isActive
+      isActive: user.isActive,
+      isAvailableForBooking: user.isAvailableForBooking
     }
   }
 })

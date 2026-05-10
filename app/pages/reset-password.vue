@@ -105,7 +105,7 @@ async function onSubmit() {
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.newPassword')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -119,7 +119,7 @@ async function onSubmit() {
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.confirmPassword')"
-          />
+          size="xl" />
         </UFormField>
 
         <UAlert
@@ -135,7 +135,7 @@ async function onSubmit() {
           block
           :loading="loading"
           :disabled="loading || !token"
-        >
+         size="xl">
           {{ t('auth.resetPassword.submit') }}
         </UButton>
       </UForm>

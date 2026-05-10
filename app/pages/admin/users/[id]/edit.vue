@@ -13,7 +13,8 @@ const user = computed(() => userData.value?.user)
 const state = reactive({
   name: '',
   role: 'STUDENT' as 'ADMIN' | 'TEACHER' | 'STUDENT',
-  isActive: true
+  isActive: true,
+  isAvailableForBooking: true
 })
 
 watchEffect(() => {
@@ -21,6 +22,7 @@ watchEffect(() => {
     state.name = user.value.name ?? ''
     state.role = user.value.role
     state.isActive = user.value.isActive ?? true
+    state.isAvailableForBooking = user.value.isAvailableForBooking ?? true
   }
 })
 
@@ -37,7 +39,8 @@ async function onSubmit() {
       body: {
         name: state.name || undefined,
         role: state.role,
-        isActive: state.isActive
+        isActive: state.isActive,
+        isAvailableForBooking: state.isAvailableForBooking
       }
     })
     await refresh()
@@ -58,9 +61,9 @@ async function onSubmit() {
 <template>
   <UContainer class="py-8">
     <div class="space-y-6">
-      <AdminPageHeader title="Edit User" />
 
-      <UCard class="border-accented">
+
+      <UCard>
         <UForm :state="state" class="space-y-4" @submit="onSubmit">
           <UFormField :label="t('fields.name')" name="name">
             <UInput v-model="state.name" size="xl" class="w-full" />
@@ -72,6 +75,10 @@ async function onSubmit() {
 
           <UFormField :label="t('fields.isActive')" name="isActive">
             <USwitch v-model="state.isActive" />
+          </UFormField>
+
+          <UFormField :label="t('fields.isAvailableForBooking')" name="isAvailableForBooking">
+            <USwitch v-model="state.isAvailableForBooking" />
           </UFormField>
 
           <UAlert

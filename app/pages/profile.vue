@@ -21,7 +21,12 @@ const state = reactive({
   phone: '',
   country: '',
   age: undefined as number | undefined,
-  password: ''
+  password: '',
+  isAvailableForBooking: true
+})
+
+const showBookingToggle = computed(() => {
+  return profile.value?.role === 'TEACHER' || profile.value?.role === 'ADMIN'
 })
 
 watchEffect(() => {
@@ -32,6 +37,7 @@ watchEffect(() => {
     state.phone = profile.value.phone ?? ''
     state.country = profile.value.country ?? ''
     state.age = profile.value.age ?? undefined
+    state.isAvailableForBooking = profile.value.isAvailableForBooking ?? true
     state.password = ''
   }
 })
@@ -57,7 +63,8 @@ async function onSubmit() {
         phone: state.phone || undefined,
         country: state.country || undefined,
         age: state.age,
-        password: state.password || undefined
+        password: state.password || undefined,
+        isAvailableForBooking: showBookingToggle.value ? state.isAvailableForBooking : undefined
       }
     })
     await refresh()
@@ -80,12 +87,6 @@ async function onSubmit() {
 <template>
   <UContainer class="py-8">
     <div class="space-y-6">
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold">
-          {{ t('nav.profile') }}
-        </h1>
-      </div>
-
       <UCard class="border-accented">
         <template #header>
           <h2 class="text-lg font-semibold">
@@ -177,6 +178,17 @@ async function onSubmit() {
               class="w-full"
               :placeholder="t('fields.age')"
             />
+          </UFormField>
+
+          <UFormField
+            v-if="showBookingToggle"
+            :label="t('teacher.availableForBooking')"
+            name="isAvailableForBooking"
+          >
+            <div class="flex items-center gap-3">
+              <USwitch v-model="state.isAvailableForBooking" />
+              <span class="text-sm text-muted-foreground">{{ t('teacher.availableForBookingHint') }}</span>
+            </div>
           </UFormField>
 
           <USeparator />

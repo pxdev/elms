@@ -1,0 +1,75 @@
+# Quality gate for the Portal.
+#
+# This workflow does NOT deploy. Coolify owns deployment via its own
+# webhook (it pulls main, builds the Dockerfile, runs migrations, ships
+# the container). CI is here purely to:
+#
+#   1. catch lint + typecheck regressions on PRs and main pushes
+#   2. smoke-test the Dockerfile so a broken container build fails the
+#      check before Coolify wastes a deploy on it
+#
+# Failures are advisory by default. Flip on a branch protection rule
+# in GitHub (Settings → Branches → main → Require status checks to
+# pass) once you trust the gate.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel an in-flight run if a newer commit lands on the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint & typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # `prisma generate` runs in the postinstall hook so the generated
+      # client + types exist before nuxt typecheck reads them.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+  docker-build:
+    name: Docker build smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build only — no registry push. Uses GitHub Actions cache so
+      # subsequent runs reuse the deps stage layer (~30s vs ~3min cold).
+      # If this step fails, the Dockerfile is broken and Coolify's
+      # build would have failed too.
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: false
+          tags: momentfy-portal:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

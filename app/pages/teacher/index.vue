@@ -16,7 +16,7 @@ const cards = computed(() => [
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader :title="t('nav.dashboard')" />
+
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <UCard v-for="card in cards" :key="card.label" class="relative overflow-hidden">

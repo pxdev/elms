@@ -5,9 +5,6 @@ export default defineEventHandler(async (event) => {
     include: {
       teacher: {
         select: { id: true, name: true, email: true }
-      },
-      variants: {
-        orderBy: { price: 'asc' }
       }
     },
     orderBy: { createdAt: 'desc' }

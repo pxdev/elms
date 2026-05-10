@@ -6,17 +6,13 @@ export default defineEventHandler(async (event) => {
     prisma.course.count({ where: { teacherId: user.id } }),
     prisma.enrollment.count({
       where: {
-        courseVariant: {
-          course: { teacherId: user.id }
-        }
+        course: { teacherId: user.id }
       }
     }),
     prisma.enrollment.count({
       where: {
         status: 'PENDING',
-        courseVariant: {
-          course: { teacherId: user.id }
-        }
+        course: { teacherId: user.id }
       }
     })
   ])

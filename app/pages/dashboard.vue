@@ -55,9 +55,6 @@ async function logout() {
 
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">
-          {{ t('dashboard.title') }}
-        </h1>
         <p class="text-sm text-muted">
           {{ t('dashboard.signedInAs', { email: user?.email }) }}
         </p>

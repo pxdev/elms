@@ -12,13 +12,10 @@ export default defineEventHandler(async (event) => {
       user: {
         select: { id: true, name: true, email: true }
       },
-      courseVariant: {
-        include: {
-          course: {
-            select: { id: true, name: true }
-          }
-        }
-      }
+      course: {
+        select: { id: true, name: true, totalSessions: true }
+      },
+      sessions: true
     }
   })
 

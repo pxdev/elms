@@ -21,7 +21,7 @@ const columns = computed<TableColumn<any>[]>(() => [
 
 <template>
   <div>
-    <AdminPageHeader :title="t('nav.courses')" />
+
 
     <UCard>
       <AdminDataTable v-model:page="page" v-model:page-size="pageSize" :data="data?.courses ?? []" :columns="columns" />

@@ -26,6 +26,8 @@
     "@tiptap/vue-3": "^3.22.5",
     "@vueuse/nuxt": "^14.3.0",
     "better-sqlite3": "^12.9.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "nodemailer": "^8.0.7",
     "nuxt": "^4.4.2",
     "nuxt-auth-utils": "^0.5.29",

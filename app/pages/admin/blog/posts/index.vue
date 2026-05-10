@@ -71,7 +71,7 @@ const columns = computed<TableColumn<any>[]>(() => [
     <div class="space-y-6">
       <AdminPageHeader :title="t('blog.posts')" :description="t('blog.managePosts')" :create-label="t('blog.createPost')" create-to="/admin/blog/posts/new" />
 
-      <UCard class="border-accented">
+      <UCard>
         <div class="flex items-center gap-2 mb-4">
           <UInput v-model="search" :placeholder="t('fields.title')" icon="i-lucide-search" size="xl" class="max-w-xs" />
         </div>

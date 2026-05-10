@@ -1,0 +1,403 @@
+// Portal database — completely isolated from the main Momentfy app.
+// Same Postgres host & credentials as the app, but a separate database
+// (default name: `portal`).
+//
+// Phases:
+//   1 — Account, PasswordReset
+//   2 — Plan, Order, License, Activation, AuditLog (this file)
+//   3 — extends Order with LS provenance (already modelled below)
+//   4 — RepoInvite (added when GitHub integration ships)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth ───────────────────────────────────────────────────────────
+
+model Account {
+  id              String          @id @default(cuid())
+  email           String          @unique
+  passwordHash    String
+  firstName       String?
+  lastName        String?
+  // GitHub username — captured at register or in profile. Required before we
+  // can invite the customer to the source-repo team after a purchase.
+  githubUsername  String?
+  isAdmin         Boolean         @default(false)
+  isActive        Boolean         @default(true)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  passwordResets  PasswordReset[]
+  licenses        License[]
+  orders          Order[]
+  auditLogs       AuditLog[]
+  repoInvites     RepoInvite[]
+  integrationSettings IntegrationSetting[]
+  supportTickets        SupportTicket[]
+  supportMessagesSent   SupportTicketMessage[] @relation("SupportTicketMessageSender")
+
+  @@index([email])
+  @@index([githubUsername])
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  accountId String
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  // SHA-256 of the URL token (never store plaintext)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([accountId])
+}
+
+// ─── Catalog ────────────────────────────────────────────────────────
+
+model Plan {
+  id                  String   @id @default(cuid())
+  // Used in URLs, e.g. /portal/checkout/self-install
+  slug                String   @unique
+  name                String
+  // Bilingual fields — Arabic copies of name/description rendered when locale=ar.
+  nameAr              String?
+  description         String?
+  descriptionAr       String?
+  // Display-only — Lemon Squeezy is the source of truth for actual price.
+  priceUsdCents       Int
+  // How many concurrent installs a license on this plan allows by default.
+  // Admin can raise per-license afterwards.
+  defaultActivations  Int      @default(1)
+  // Lemon Squeezy variant id this plan maps to (set in Phase 3).
+  lsVariantId         String?
+  // Display order on /portal/pricing and admin lists.
+  sortOrder           Int      @default(0)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  licenses            License[]
+  orders              Order[]
+  features            PlanFeature[]
+  promoCodes          PromoCode[]
+}
+
+// Bilingual catalog of feature labels surfaced under each plan on /portal/pricing.
+// Decoupled from Plan so the same feature line ("Bilingual AR + EN UI") can be
+// reused across multiple tiers without retyping translations.
+model Feature {
+  id        String   @id @default(cuid())
+  label     String
+  labelAr   String?
+  // Free-form admin-only context (e.g. "Compliance copy mandated by legal 2025-Q1").
+  notes     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plans     PlanFeature[]
+}
+
+// Many-to-many between Plan and Feature; sortOrder lets the admin reorder a
+// feature within a single plan without affecting the global Feature.sortOrder.
+model PlanFeature {
+  planId    String
+  featureId String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  feature   Feature  @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@id([planId, featureId])
+  @@index([planId])
+  @@index([featureId])
+}
+
+// Promo codes redeemable at checkout. `currentUses` is incremented by the
+// checkout webhook when an order is created with this code attached.
+// `planId == null` means the code applies to any plan.
+model PromoCode {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  discountPercent Int
+  planId          String?
+  plan            Plan?     @relation(fields: [planId], references: [id], onDelete: SetNull)
+  maxUses         Int?
+  currentUses     Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  // Admin-facing context (campaign name, partner, etc.). Never shown publicly.
+  notes           String?
+  // Mirror of this row in the Lemon Squeezy Discounts catalog. Populated
+  // when admin creates/updates the PromoCode — the portal POSTs to
+  // `POST /v1/discounts` and stores the LS id here so later edits can
+  // PATCH the same discount. `null` means the code hasn't been synced
+  // yet (e.g. seeded codes, or the sync failed — admin can re-sync).
+  lsDiscountId    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  orders          Order[]
+
+  @@index([code])
+  @@index([planId])
+}
+
+// ─── Sales ──────────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PAID
+  REFUNDED
+  PARTIAL_REFUND
+  PENDING
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  accountId       String
+  account         Account       @relation(fields: [accountId], references: [id])
+  planId          String?
+  plan            Plan?         @relation(fields: [planId], references: [id])
+
+  // Lemon Squeezy provenance (null for manually-issued orders).
+  lsOrderId       String?       @unique
+  lsCustomerId    String?
+  lsOrderNumber   String?
+  lsReceiptUrl    String?
+
+  amountCents     Int
+  currency        String                            // 'USD', 'SAR', etc.
+  status          OrderStatus   @default(PAID)
+  refundedAt      DateTime?
+  refundReason    String?
+  // Promo code applied at checkout (if any). Kept for audit + reporting.
+  promoCodeId     String?
+  promoCode       PromoCode?    @relation(fields: [promoCodeId], references: [id])
+  // Last LS webhook payload kept for forensics / replay debugging.
+  rawPayload      Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  licenses        License[]
+
+  @@index([accountId])
+  @@index([lsCustomerId])
+  @@index([promoCodeId])
+}
+
+// ─── Licenses ───────────────────────────────────────────────────────
+
+enum LicenseStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model License {
+  id                  String        @id @default(cuid())
+  accountId           String
+  account             Account       @relation(fields: [accountId], references: [id])
+  orderId             String?
+  order               Order?        @relation(fields: [orderId], references: [id])
+  planId              String
+  plan                Plan          @relation(fields: [planId], references: [id])
+
+  // First 8 chars of the formatted key, kept for display: "MFY-A4F2"
+  keyPrefix           String
+  // SHA-256(key + LICENSE_PEPPER); the plaintext key is shown ONCE at issuance.
+  keyHash             String        @unique
+  // Concurrent installs allowed. Default from Plan; admin can raise per license.
+  maxActivations      Int           @default(1)
+  status              LicenseStatus @default(ACTIVE)
+  // Free-form admin-only note (e.g. "VIP — comped trial")
+  notes               String?
+  // null = perpetual (the standard for self-hosted lifetime licenses)
+  expiresAt           DateTime?
+  revokedAt           DateTime?
+  revokedReason       String?
+  issuedAt            DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  activations         Activation[]
+
+  @@index([accountId])
+  @@index([keyPrefix])
+  @@index([status])
+}
+
+model Activation {
+  id              String     @id @default(cuid())
+  licenseId       String
+  license         License    @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  // sha256(machine-id + hostname) — opaque to the portal
+  fingerprint     String
+  hostname        String?
+  ipAddress       String?
+  appVersion      String?
+  // Returned to the instance on activate; presented again on heartbeat.
+  activationToken String     @unique
+  lastSeenAt      DateTime   @default(now())
+  deactivatedAt   DateTime?
+  createdAt       DateTime   @default(now())
+
+  @@unique([licenseId, fingerprint])
+  @@index([licenseId])
+  @@index([fingerprint])
+}
+
+// ─── GitHub access ──────────────────────────────────────────────────
+
+enum InviteStatus {
+  PENDING       // row created, invite not yet sent (e.g. no GH username on file)
+  SENT          // Octokit returned ok; awaiting customer to accept
+  ACCEPTED      // membership confirmed via Octokit poll
+  FAILED        // Octokit returned an error (lastError + attempts populated)
+}
+
+model RepoInvite {
+  id              String       @id @default(cuid())
+  accountId       String
+  account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  // Snapshot at invite time — Account.githubUsername may change later.
+  githubUsername  String
+  status          InviteStatus @default(PENDING)
+  attempts        Int          @default(0)
+  lastError       String?
+  sentAt          DateTime?
+  acceptedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([accountId, githubUsername])
+  @@index([status])
+}
+
+// ─── Integration settings ──────────────────────────────────────────
+//
+// Singleton key→value store for integration credentials previously held in
+// env vars (Lemon Squeezy, GitHub, SMTP). `value` is AES-256-GCM ciphertext
+// for sensitive keys (api keys, tokens, secrets, passwords) and plaintext
+// for the rest (host, port, store id, org names, etc.). The encryption-vs-
+// plaintext call is made in server/utils/integration-settings.ts based on
+// the key name; the column itself doesn't enforce a flag.
+//
+// Reads fall back to process.env when no row exists, so a fresh deployment
+// keeps working on its existing env vars until an admin saves a value.
+
+model IntegrationSetting {
+  key         String   @id
+  value       String   @db.Text
+  // True when `value` is encrypted ciphertext (sensitive keys); false for
+  // plaintext (host, port, ids). Lets the read path know whether to decrypt.
+  encrypted   Boolean  @default(false)
+  updatedById String?
+  updatedBy   Account? @relation(fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([updatedById])
+}
+
+// ─── Audit ──────────────────────────────────────────────────────────
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  // null when the action is performed by the system (webhook, scheduled job).
+  actorId     String?
+  actor       Account? @relation(fields: [actorId], references: [id])
+  // Dot-notation: 'license.issued', 'license.revoked', 'activation.reset', ...
+  action      String
+  targetType  String?  // 'License' | 'Account' | 'Order' | 'Activation'
+  targetId    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([actorId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
+
+
+// ─── Support tickets ───────────────────────────────────────────────
+//
+// Single store for two intake paths:
+//   1. CONTACT — anonymous visitor uses the marketing-site contact form.
+//      No accountId; we record name+email so admins can still reply by mail.
+//   2. CUSTOMER — an authenticated portal user opens a support request
+//      from /dashboard/support. accountId is set; email/name are mirrored
+//      from the account at create time so admin search works the same.
+enum SupportTicketSource {
+  CONTACT
+  CUSTOMER
+}
+
+enum SupportTicketStatus {
+  OPEN            // newly created, awaiting admin
+  AWAITING_USER   // admin replied, waiting on user
+  RESOLVED        // closed by user or admin after the issue was fixed
+  CLOSED          // closed without resolution / by admin moderation
+}
+
+model SupportTicket {
+  id        String              @id @default(cuid())
+  // Set for CUSTOMER tickets; null for anonymous CONTACT tickets.
+  accountId String?
+  account   Account?            @relation(fields: [accountId], references: [id])
+  // Always populated — for CUSTOMER tickets it's mirrored from the account
+  // so admins can list/search both intake paths the same way.
+  email     String
+  name      String?
+
+  source    SupportTicketSource @default(CONTACT)
+  subject   String
+  status    SupportTicketStatus @default(OPEN)
+
+  // Unread flags drive bell counts without scanning messages.
+  unreadByUser  Boolean   @default(false)
+  unreadByAdmin Boolean   @default(true)
+
+  // Sort/filter helpers populated by the messages.post handler.
+  lastUserReplyAt  DateTime?
+  lastAdminReplyAt DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  closedAt  DateTime?
+
+  messages  SupportTicketMessage[]
+
+  @@index([accountId, status])
+  @@index([email])
+  @@index([source, status])
+  @@index([status, updatedAt])
+}
+
+model SupportTicketMessage {
+  id       String        @id @default(cuid())
+  ticketId String
+  ticket   SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  // null for the anonymous initial message of a CONTACT ticket;
+  // otherwise the Account that wrote the message.
+  senderAccountId String?
+  senderAccount   Account? @relation("SupportTicketMessageSender", fields: [senderAccountId], references: [id])
+  // Authoritative — drives styling and unread flags. Mirrors
+  // senderAccount.isAdmin at the moment the message was written so a later
+  // role flip doesn't rewrite history.
+  isAdmin   Boolean       @default(false)
+
+  body      String        @db.Text
+  createdAt DateTime      @default(now())
+
+  @@index([ticketId, createdAt])
+}

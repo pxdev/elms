@@ -5,33 +5,30 @@ export default defineEventHandler(async (event) => {
 
   const body = await parseBody(event, enrollmentSchema)
 
-  const variant = await prisma.courseVariant.findUnique({
-    where: { id: body.courseVariantId, isActive: true },
-    include: { course: true }
+  const course = await prisma.course.findUnique({
+    where: { id: body.courseId, isActive: true }
   })
 
-  if (!variant || !variant.course.isActive) {
-    throw createError({ statusCode: 404, message: 'Course variant not found.' })
+  if (!course) {
+    throw createError({ statusCode: 404, message: 'Course not found.' })
   }
 
   const existing = await prisma.enrollment.findUnique({
-    where: { userId_courseVariantId: { userId: user.id, courseVariantId: variant.id } }
+    where: { userId_courseId: { userId: user.id, courseId: course.id } }
   })
 
   if (existing) {
-    throw createError({ statusCode: 409, message: 'You are already enrolled in this course variant.' })
+    throw createError({ statusCode: 409, message: 'You are already enrolled in this course.' })
   }
 
   const enrollment = await prisma.enrollment.create({
     data: {
       userId: user.id,
-      courseVariantId: variant.id,
+      courseId: course.id,
       status: 'PENDING'
     },
     include: {
-      courseVariant: {
-        include: { course: true }
-      }
+      course: true
     }
   })
 

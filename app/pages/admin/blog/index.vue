@@ -21,9 +21,6 @@ const draftCount = computed(() => posts.value.filter(p => !p.published).length)
   <UContainer class="py-8">
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold">
-          {{ t('blog.title') }}
-        </h1>
         <UButton
           to="/admin/blog/posts/new"
           color="primary"
@@ -34,19 +31,19 @@ const draftCount = computed(() => posts.value.filter(p => !p.published).length)
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <UCard class="border-accented">
+        <UCard>
           <div class="text-3xl font-bold">{{ posts.length }}</div>
           <div class="text-sm text-muted-foreground">{{ t('fields.posts') }}</div>
         </UCard>
-        <UCard class="border-accented">
+        <UCard>
           <div class="text-3xl font-bold text-success">{{ publishedCount }}</div>
           <div class="text-sm text-muted-foreground">{{ t('blog.published') }}</div>
         </UCard>
-        <UCard class="border-accented">
+        <UCard>
           <div class="text-3xl font-bold">{{ categories.length }}</div>
           <div class="text-sm text-muted-foreground">{{ t('fields.categories') }}</div>
         </UCard>
-        <UCard class="border-accented">
+        <UCard>
           <div class="text-3xl font-bold">{{ tags.length }}</div>
           <div class="text-sm text-muted-foreground">{{ t('fields.tags') }}</div>
         </UCard>
@@ -93,7 +90,7 @@ const draftCount = computed(() => posts.value.filter(p => !p.published).length)
         </UButton>
       </div>
 
-      <UCard class="border-accented">
+      <UCard>
         <template #header>
           <h2 class="text-lg font-semibold">{{ t('blog.recentPosts') }}</h2>
         </template>

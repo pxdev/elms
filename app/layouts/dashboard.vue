@@ -17,14 +17,19 @@ const navItems = computed(() => {
       { label: t('nav.courses'), icon: 'i-lucide-book-open', to: '/admin/courses' },
       { label: t('nav.enrollments'), icon: 'i-lucide-users', to: '/admin/enrollments' },
       { label: t('fields.name'), icon: 'i-lucide-user-cog', to: '/admin/users' },
-      { label: t('nav.blog'), icon: 'i-lucide-newspaper', to: '/admin/blog' }
+      { label: 'Promo Codes', icon: 'i-lucide-ticket-percent', to: '/admin/promo-codes' },
+      { label: t('nav.blog'), icon: 'i-lucide-newspaper', to: '/admin/blog' },
+      { label: t('teacher.availability'), icon: 'i-lucide-calendar-clock', to: '/teacher/availability' },
+      { label: t('teacher.sessions'), icon: 'i-lucide-calendar-days', to: '/teacher/sessions' }
     ]
   }
   if (role === 'TEACHER') {
     return [
       { label: t('nav.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/teacher', exact: true },
       { label: t('nav.courses'), icon: 'i-lucide-book-open', to: '/teacher/courses' },
-      { label: t('nav.enrollments'), icon: 'i-lucide-users', to: '/teacher/enrollments' }
+      { label: t('nav.enrollments'), icon: 'i-lucide-users', to: '/teacher/enrollments' },
+      { label: t('teacher.availability'), icon: 'i-lucide-calendar-clock', to: '/teacher/availability' },
+      { label: t('teacher.sessions'), icon: 'i-lucide-calendar-days', to: '/teacher/sessions' }
     ]
   }
   return [
@@ -69,10 +74,35 @@ const userDropdownItems = computed(() => [
   [{ label: t('nav.profile'), icon: 'i-lucide-user', to: '/profile' }],
   [{ label: t('nav.signOut'), icon: 'i-lucide-log-out', onSelect: logout }]
 ] as any)
+
+// ── Page title from current route ──────────────────────────────────
+const pageTitle = computed(() => {
+  const path = route.path
+
+  // Exact nav match
+  const exact = navItems.value.find(i => i.to === path)
+  if (exact) return exact.label
+
+  // Prefix match for nested routes (longest first)
+  const sorted = [...navItems.value].sort((a, b) => b.to.length - a.to.length)
+  const prefix = sorted.find(i => path.startsWith(i.to + '/'))
+  if (prefix) {
+    if (path.endsWith('/new')) return `${t('common.add')} ${prefix.label}`
+    if (path.includes('/edit')) return `${t('common.edit')} ${prefix.label}`
+    return prefix.label
+  }
+
+  // Special routes not in nav
+  if (path === '/profile') return t('nav.profile')
+  if (path === '/dashboard') return t('nav.dashboard')
+  if (path.startsWith('/courses/')) return t('nav.courses')
+
+  return ''
+})
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-background">
+  <div class="flex min-h-screen bg-white">
     <aside class="w-16 bg-neutral-950 flex flex-col sticky top-0 h-screen shrink-0">
       <div class="h-14 flex items-center justify-center border-b border-neutral-800">
         <NuxtLink to="/">
@@ -106,9 +136,16 @@ const userDropdownItems = computed(() => [
       </div>
     </aside>
 
-    <div class="flex-1 flex flex-col min-w-0">
-      <header class="h-14 border-b bg-card flex items-center justify-between px-4 shrink-0 gap-4">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-auto">
+      <header class="sticky top-0 z-50 h-14 border-b border-accented bg-white flex items-center justify-between px-4 shrink-0 gap-4">
         <div class="flex items-center gap-3 flex-1">
+          <h1
+            v-if="pageTitle"
+            class="text-sm font-semibold text-neutral-900 truncate hidden sm:block"
+          >
+            {{ pageTitle }}
+          </h1>
+
           <UDashboardSearchButton
             class="w-full max-w-sm justify-start"
             @click="searchOpen = true"
@@ -140,7 +177,7 @@ const userDropdownItems = computed(() => [
         shortcut="meta_k"
       />
 
-      <main class="flex-1 p-6 overflow-auto">
+      <main class="flex-1 p-6">
         <NuxtPage />
       </main>
     </div>

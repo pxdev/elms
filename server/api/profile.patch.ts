@@ -14,6 +14,10 @@ export default defineEventHandler(async (event) => {
     age: body.age
   }
 
+  if (body.isAvailableForBooking !== undefined) {
+    data.isAvailableForBooking = body.isAvailableForBooking
+  }
+
   if (body.password) {
     data.passwordHash = await hashPassword(body.password)
   }
@@ -33,8 +37,9 @@ export default defineEventHandler(async (event) => {
       phone: updated.phone,
       country: updated.country,
       age: updated.age,
-      isActive: updated.isActive
-    },
+      isActive: updated.isActive,
+      isAvailableForBooking: updated.isAvailableForBooking
+    } as any,
     loggedInAt: Date.now()
   })
 

@@ -81,6 +81,7 @@
     "emailVerified": "تم التحقق من البريد",
     "createdAt": "تاريخ الانضمام",
     "description": "الوصف",
+    "content": "المحتوى",
     "imageUrl": "رابط الصورة",
     "teacher": "المعلم",
     "teacherId": "معرف المعلم",
@@ -105,7 +106,17 @@
     "tag": "الوسم",
     "tags": "الوسوم",
     "author": "المؤلف",
-    "posts": "المقالات"
+    "posts": "المقالات",
+    "totalSessions": "إجمالي الجلسات",
+    "zoomLink": "رابط Zoom",
+    "scheduledAt": "مُجدول في",
+    "duration": "المدة",
+    "notes": "ملاحظات",
+    "availability": "التوفر",
+    "url": "الرابط",
+    "type": "النوع",
+    "sessions": "الجلسات",
+    "isPrivate": "خاص"
   },
   "common": {
     "yes": "نعم",
@@ -120,7 +131,11 @@
     "manage": "إدارة",
     "active": "نشط",
     "inactive": "غير نشط",
-    "all": "الكل"
+    "all": "الكل",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "back": "رجوع",
+    "loading": "جار التحميل..."
   },
   "dashboard": {
     "title": "لوحة التحكم",
@@ -164,13 +179,53 @@
       "PENDING": "معلق",
       "ACTIVE": "نشط",
       "COMPLETED": "مكتمل",
-      "CANCELLED": "ملغى"
+      "CANCELLED": "ملغى",
+      "SCHEDULED": "مجدول",
+      "NO_SHOW": "غائب"
     },
     "empty": {
       "title": "لا توجد تسجيلات بعد",
       "description": "تصفح الدورات وسجل في إحداها للبدء."
     },
     "paymentSuccessTitle": "تم الدفع بنجاح"
+  },
+  "days": {
+    "sunday": "الأحد",
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت"
+  },
+  "teacher": {
+    "availability": "التوفر",
+    "sessions": "الجلسات",
+    "calendar": "التقويم",
+    "noAvailability": "لم يتم تحديد أوقات التوفر"
+  },
+  "sessions": {
+    "title": "جلساتي",
+    "upcoming": "القادمة",
+    "past": "السابقة",
+    "bookSession": "حجز جلسة",
+    "noSessions": "لا توجد جلسات مجدولة",
+    "sessionCount": "جلسات",
+    "markComplete": "تحديد كمكتملة",
+    "markNoShow": "تحديد كغائب",
+    "markCancelled": "تحديد كملغاة",
+    "maxReached": "لقد حجزت جميع الجلسات المتاحة",
+    "noAvailability": "المعلم لم يحدد أوقات توفره",
+    "noSlots": "لا توجد أوقات متاحة",
+    "progress": "تقدم الجلسات"
+  },
+  "materials": {
+    "title": "المواد",
+    "addMaterial": "إضافة مادة",
+    "allMaterials": "جميع المواد",
+    "shared": "مشتركة",
+    "private": "خاصة",
+    "noMaterials": "لا توجد مواد بعد"
   },
   "blog": {
     "title": "المدونة",
@@ -229,6 +284,9 @@
       "passwords_match": "كلمتا المرور غير متطابقتين.",
       "required": "هذا الحقل مطلوب.",
       "invalid": "قيمة غير صالحة."
-    }
+    },
+    "slotTaken": "هذا الوقت محجوز بالفعل.",
+    "maxSessionsReached": "لقد وصلت إلى الحد الأقصى من الجلسات.",
+    "invalidSlot": "وقت غير صالح."
   }
 }

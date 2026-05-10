@@ -4,7 +4,6 @@ export default defineEventHandler(async (event) => {
 
   const courses = await prisma.course.findMany({
     where: { teacherId: user.id },
-    include: { variants: true },
     orderBy: { createdAt: 'desc' }
   })
 

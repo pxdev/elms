@@ -11,7 +11,10 @@ const state = reactive({
   name: '',
   description: '',
   imageUrl: '',
-  teacherId: undefined as number | undefined
+  teacherId: undefined as number | undefined,
+  price: undefined as number | undefined,
+  totalSessions: undefined as number | undefined,
+  lsVariantId: ''
 })
 
 const { data: teachersData } = await useFetch('/api/admin/teachers')
@@ -38,7 +41,10 @@ async function onSubmit() {
         name: state.name,
         description: state.description || undefined,
         imageUrl: state.imageUrl || undefined,
-        teacherId: state.teacherId
+        teacherId: state.teacherId,
+        price: state.price,
+        totalSessions: state.totalSessions,
+        lsVariantId: state.lsVariantId || undefined
       }
     })
     await navigateTo('/admin/courses')
@@ -57,12 +63,7 @@ async function onSubmit() {
 
 <template>
   <UContainer class="py-8">
-    <UCard class="border-accented">
-      <template #header>
-        <h1 class="text-xl font-semibold">
-          {{ t('admin.courses.create') }}
-        </h1>
-      </template>
+    <UCard>
 
       <UForm
         :state="state"
@@ -102,18 +103,58 @@ async function onSubmit() {
           <AppImageUpload v-model="state.imageUrl" />
         </UFormField>
 
-        <UFormField
-          :label="t('fields.teacherId')"
-          name="teacherId"
-        >
-          <USelect
-            v-model="state.teacherId"
-            :items="teacherItems"
-            size="xl"
-            class="w-full"
-            :placeholder="t('fields.teacherId')"
-          />
-        </UFormField>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UFormField
+            :label="t('fields.teacherId')"
+            name="teacherId"
+          >
+            <USelect
+              v-model="state.teacherId"
+              :items="teacherItems"
+              size="xl"
+              class="w-full"
+              :placeholder="t('fields.teacherId')"
+            />
+          </UFormField>
+
+          <UFormField
+            :label="t('fields.price')"
+            name="price"
+          >
+            <UInput
+              v-model="state.price"
+              type="number"
+              size="xl"
+              class="w-full"
+              :placeholder="t('fields.price')"
+            />
+          </UFormField>
+
+          <UFormField
+            :label="t('fields.totalSessions')"
+            name="totalSessions"
+          >
+            <UInput
+              v-model="state.totalSessions"
+              type="number"
+              size="xl"
+              class="w-full"
+              :placeholder="t('fields.totalSessions')"
+            />
+          </UFormField>
+
+          <UFormField
+            :label="t('fields.lsVariantId')"
+            name="lsVariantId"
+          >
+            <UInput
+              v-model="state.lsVariantId"
+              size="xl"
+              class="w-full"
+              :placeholder="t('fields.lsVariantId')"
+            />
+          </UFormField>
+        </div>
 
         <UAlert
           v-if="errorMessage"

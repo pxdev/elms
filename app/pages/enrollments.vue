@@ -32,6 +32,12 @@ function formatAmount(cents?: number) {
   if (cents == null) return undefined
   return `$${(cents / 100).toFixed(2)}`
 }
+
+function sessionProgress(enrollment: any) {
+  const total = enrollment.course.totalSessions ?? 0
+  const booked = (enrollment.sessions ?? []).filter((s: any) => s.status !== 'CANCELLED').length
+  return { total, booked, remaining: Math.max(0, total - booked) }
+}
 </script>
 
 <template>
@@ -46,9 +52,6 @@ function formatAmount(cents?: number) {
     />
 
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold">
-        {{ t('enrollments.title') }}
-      </h1>
       <UButton
         size="xs"
         color="neutral"
@@ -72,7 +75,7 @@ function formatAmount(cents?: number) {
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <h2 class="font-semibold">
-              {{ enrollment.courseVariant.course.name }}
+              {{ enrollment.course.name }}
             </h2>
             <UBadge
               :label="t(`enrollments.status.${enrollment.status}`)"
@@ -82,10 +85,7 @@ function formatAmount(cents?: number) {
             />
           </div>
           <p class="text-sm text-muted">
-            {{ enrollment.courseVariant.name }}
-          </p>
-          <p class="text-sm text-muted">
-            {{ t('courses.sessionsPerMonth', { count: enrollment.courseVariant.sessionsPerMonth }) }}
+            {{ t('courses.teacher') }}: {{ enrollment.course.teacher?.name ?? t('common.notAssigned') }}
           </p>
           <p class="text-sm text-muted">
             {{ t('enrollments.enrolledAt') }}: {{ new Date(enrollment.enrolledAt).toLocaleDateString() }}
@@ -95,7 +95,7 @@ function formatAmount(cents?: number) {
             class="flex items-center gap-2"
           >
             <UBadge
-              :label="t(`enrollments.paymentStatus.${enrollment.paymentStatus ?? 'PENDING'}`)"
+              :label="t(`payments.status.${enrollment.paymentStatus ?? 'PENDING'}`)"
               :color="paymentStatusColor(enrollment.paymentStatus ?? undefined)"
               variant="subtle"
               size="sm"
@@ -113,17 +113,46 @@ function formatAmount(cents?: number) {
           >
             {{ t('enrollments.paidAt') }}: {{ new Date(enrollment.paidAt).toLocaleDateString() }}
           </p>
+
+          <!-- Session progress -->
+          <div v-if="enrollment.status === 'ACTIVE'" class="pt-2 border-t">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground">
+                {{ t('sessions.progress') }}
+              </span>
+              <span class="font-medium">
+                {{ sessionProgress(enrollment).booked }} / {{ sessionProgress(enrollment).total }}
+              </span>
+            </div>
+            <div class="w-full bg-neutral-100 rounded-full h-2 mt-1">
+              <div
+                class="bg-primary rounded-full h-2 transition-all"
+                :style="{ width: `${sessionProgress(enrollment).total > 0 ? (sessionProgress(enrollment).booked / sessionProgress(enrollment).total) * 100 : 0}%` }"
+              />
+            </div>
+          </div>
         </div>
 
         <template #footer>
-          <UButton
-            :to="`/courses/${enrollment.courseVariant.course.id}`"
-            block
-            color="primary"
-            variant="subtle"
-          >
-            {{ t('courses.viewDetails') }}
-          </UButton>
+          <div class="flex gap-2">
+            <UButton
+              v-if="enrollment.status === 'ACTIVE' && sessionProgress(enrollment).remaining > 0"
+              :to="`/student/sessions/book?enrollment=${enrollment.id}`"
+              color="primary"
+              variant="soft"
+              class="flex-1"
+            >
+              {{ t('sessions.bookSession') }}
+            </UButton>
+            <UButton
+              :to="`/courses/${enrollment.course.id}`"
+              color="neutral"
+              variant="ghost"
+              class="flex-1"
+            >
+              {{ t('courses.viewDetails') }}
+            </UButton>
+          </div>
         </template>
       </UCard>
     </div>

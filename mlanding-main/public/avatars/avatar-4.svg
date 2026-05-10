@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Female with Hijab — Specialist -->
+  <defs>
+    <radialGradient id="face4" cx="0.5" cy="0.4" r="0.55"><stop offset="0%" stop-color="#fce0c4"/><stop offset="100%" stop-color="#ecc8a0"/></radialGradient>
+    <radialGradient id="bgr4" cx="0.5" cy="0.5" r="0.6"><stop offset="0%" stop-color="#d8c4f8"/><stop offset="100%" stop-color="#b8a0e8"/></radialGradient>
+    <linearGradient id="hijab4" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#8e7cc3"/><stop offset="100%" stop-color="#7c6bb0"/></linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="64" fill="url(#bgr4)"/>
+
+  <!-- Hijab body drape -->
+  <path d="M24 60 C24 80 30 100 38 120 L90 120 C98 100 104 80 104 60" fill="url(#hijab4)"/>
+  <!-- Body under hijab -->
+  <ellipse cx="64" cy="118" rx="42" ry="24" fill="url(#hijab4)"/>
+
+  <!-- Hijab head -->
+  <ellipse cx="64" cy="48" rx="36" ry="36" fill="url(#hijab4)"/>
+  <!-- Hijab inner band -->
+  <path d="M38 36 C48 30 80 30 90 36" stroke="#a08ed0" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Hijab fold detail -->
+  <path d="M36 58 C34 70 34 82 36 94" stroke="#7060a0" stroke-width="1" fill="none" opacity="0.25"/>
+  <path d="M92 58 C94 70 94 82 92 94" stroke="#7060a0" stroke-width="1" fill="none" opacity="0.25"/>
+
+  <!-- Face -->
+  <ellipse cx="64" cy="54" rx="22" ry="24" fill="url(#face4)"/>
+
+  <!-- Eyebrows -->
+  <path d="M48 44 C52 40 56 40 60 43" stroke="#5a3825" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M68 43 C72 40 76 40 80 44" stroke="#5a3825" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <ellipse cx="54" cy="52" rx="6.5" ry="6" fill="white"/>
+  <circle cx="55" cy="52.5" r="4.2" fill="#5c3a1a"/>
+  <circle cx="55" cy="52.5" r="2.6" fill="#0e0804"/>
+  <ellipse cx="57" cy="50.5" rx="1.6" ry="1.2" fill="white" opacity="0.8"/>
+  <circle cx="53.5" cy="54" r="0.7" fill="white" opacity="0.35"/>
+  <path d="M47.5 50 C50 47 58 47 60.5 50" stroke="#5a3825" stroke-width="1.2" fill="none"/>
+
+  <ellipse cx="74" cy="52" rx="6.5" ry="6" fill="white"/>
+  <circle cx="75" cy="52.5" r="4.2" fill="#5c3a1a"/>
+  <circle cx="75" cy="52.5" r="2.6" fill="#0e0804"/>
+  <ellipse cx="77" cy="50.5" rx="1.6" ry="1.2" fill="white" opacity="0.8"/>
+  <circle cx="73.5" cy="54" r="0.7" fill="white" opacity="0.35"/>
+  <path d="M67.5 50 C70 47 78 47 80.5 50" stroke="#5a3825" stroke-width="1.2" fill="none"/>
+
+  <!-- Eyelashes -->
+  <path d="M47.5 49.5 L46 47.5" stroke="#5a3825" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M60.5 49.5 L62 47.5" stroke="#5a3825" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M67.5 49.5 L66 47.5" stroke="#5a3825" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M80.5 49.5 L82 47.5" stroke="#5a3825" stroke-width="0.8" stroke-linecap="round"/>
+
+  <!-- Nose -->
+  <ellipse cx="64" cy="62" rx="3.5" ry="2" fill="#deb08a" opacity="0.4"/>
+  <path d="M61 62 C62.5 64 65.5 64 67 62" stroke="#d0a07a" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Smile -->
+  <path d="M54 70 C58 77 70 77 74 70" fill="#c05040"/>
+  <path d="M54 70 C58 73.5 70 73.5 74 70" fill="white"/>
+  <path d="M54 70 C58 77 70 77 74 70" fill="none" stroke="#a84030" stroke-width="0.8"/>
+  <path d="M56 75 C60 78 68 78 72 75" fill="#d06858" opacity="0.4"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="42" cy="62" rx="6" ry="3.5" fill="#f0a898" opacity="0.18"/>
+  <ellipse cx="86" cy="62" rx="6" ry="3.5" fill="#f0a898" opacity="0.18"/>
+</svg>

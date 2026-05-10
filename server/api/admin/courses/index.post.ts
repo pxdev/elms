@@ -10,7 +10,10 @@ export default defineEventHandler(async (event) => {
       name: body.name.trim(),
       description: body.description?.trim() ?? null,
       imageUrl: body.imageUrl?.trim() ?? null,
-      teacherId: body.teacherId ?? null
+      teacherId: body.teacherId ?? null,
+      price: body.price ?? 0,
+      totalSessions: body.totalSessions ?? 4,
+      lsVariantId: body.lsVariantId?.trim() ?? null
     }
   })
 

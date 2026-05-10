@@ -37,7 +37,8 @@ async function onDelete(id: number) {
 const columns = computed<TableColumn<any>[]>(() => [
   { accessorKey: 'name', header: t('fields.name') },
   { accessorKey: 'teacher.name', header: t('fields.teacher'), cell: ({ row }) => h('span', {}, row.original.teacher?.name ?? '-') },
-  { accessorKey: 'variants', header: t('fields.variants'), cell: ({ row }) => h('span', {}, row.original.variants?.length ?? 0) },
+  { accessorKey: 'price', header: t('fields.price'), cell: ({ row }) => h('span', {}, row.original.price != null ? `$${Number(row.original.price).toFixed(2)}` : '-') },
+  { accessorKey: 'totalSessions', header: t('fields.totalSessions') },
   { accessorKey: 'isActive', header: t('fields.status'), cell: ({ row }) => {
     const Badge = resolveComponent('UBadge') as any
     return h(Badge, { label: row.getValue('isActive') ? t('common.active') : t('common.inactive'), color: row.getValue('isActive') ? 'success' : 'neutral', variant: 'subtle', size: 'sm' })
@@ -61,7 +62,7 @@ const columns = computed<TableColumn<any>[]>(() => [
     <div class="space-y-6">
       <AdminPageHeader :title="t('admin.courses.title')" :description="t('admin.courses.description')" :create-label="t('admin.courses.create')" create-to="/admin/courses/new" />
 
-      <UCard class="border-accented">
+      <UCard>
         <div class="flex items-center gap-2 mb-4">
           <UInput v-model="search" :placeholder="t('fields.name')" icon="i-lucide-search" size="xl" class="max-w-xs" />
         </div>

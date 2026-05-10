@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Male Barber — Apple Memoji inspired -->
+  <defs>
+    <radialGradient id="face" cx="0.5" cy="0.4" r="0.55">
+      <stop offset="0%" stop-color="#fce0c4"/>
+      <stop offset="100%" stop-color="#ecc8a0"/>
+    </radialGradient>
+    <radialGradient id="bgr" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#b8c9f2"/>
+      <stop offset="100%" stop-color="#93a8e8"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="64" cy="64" r="64" fill="url(#bgr)"/>
+
+  <!-- Body -->
+  <ellipse cx="64" cy="118" rx="42" ry="24" fill="#5b5fc7"/>
+  <ellipse cx="64" cy="116" rx="38" ry="20" fill="#6e72d0"/>
+
+  <!-- Neck -->
+  <path d="M55 82 C55 90 58 94 64 94 C70 94 73 90 73 82Z" fill="url(#face)"/>
+
+  <!-- Head -->
+  <ellipse cx="64" cy="52" rx="30" ry="32" fill="url(#face)"/>
+
+  <!-- Ears -->
+  <ellipse cx="34" cy="54" rx="6" ry="8" fill="#ecc8a0"/>
+  <ellipse cx="34" cy="54" rx="3.5" ry="5" fill="#e0b48e" opacity="0.5"/>
+  <ellipse cx="94" cy="54" rx="6" ry="8" fill="#ecc8a0"/>
+  <ellipse cx="94" cy="54" rx="3.5" ry="5" fill="#e0b48e" opacity="0.5"/>
+
+  <!-- Hair back shadow -->
+  <ellipse cx="64" cy="28" rx="30" ry="18" fill="#1c0f04"/>
+
+  <!-- Hair -->
+  <path d="M34 46 C34 20 46 10 64 10 C82 10 94 20 94 46" fill="#2a1708"/>
+  <!-- Hair volume top -->
+  <path d="M38 38 C42 14 54 8 64 8 C74 8 86 14 90 38" fill="#2a1708"/>
+  <!-- Hair front swoosh -->
+  <path d="M40 40 C42 34 50 28 64 26 C72 26 76 30 78 34" fill="#331e0c" opacity="0.6"/>
+  <!-- Side taper -->
+  <path d="M34 46 C33 50 34 56 36 58" fill="#2a1708"/>
+  <path d="M94 46 C95 50 94 56 92 58" fill="#2a1708"/>
+
+  <!-- Eyebrows -->
+  <path d="M44 38 C48 34 54 34 58 37" stroke="#2a1708" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <path d="M70 37 C74 34 80 34 84 38" stroke="#2a1708" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <!-- Left -->
+  <ellipse cx="52" cy="48" rx="7" ry="6.5" fill="white"/>
+  <circle cx="53" cy="48.5" r="4.5" fill="#5c3a1a"/>
+  <circle cx="53" cy="48.5" r="2.8" fill="#0e0804"/>
+  <ellipse cx="55" cy="46.5" rx="1.8" ry="1.4" fill="white" opacity="0.8"/>
+  <circle cx="51.5" cy="50" r="0.8" fill="white" opacity="0.35"/>
+  <!-- Upper lid -->
+  <path d="M45 46 C48 43 56 43 59 46" stroke="#2a1708" stroke-width="1.2" fill="none"/>
+
+  <!-- Right -->
+  <ellipse cx="76" cy="48" rx="7" ry="6.5" fill="white"/>
+  <circle cx="77" cy="48.5" r="4.5" fill="#5c3a1a"/>
+  <circle cx="77" cy="48.5" r="2.8" fill="#0e0804"/>
+  <ellipse cx="79" cy="46.5" rx="1.8" ry="1.4" fill="white" opacity="0.8"/>
+  <circle cx="75.5" cy="50" r="0.8" fill="white" opacity="0.35"/>
+  <!-- Upper lid -->
+  <path d="M69 46 C72 43 80 43 83 46" stroke="#2a1708" stroke-width="1.2" fill="none"/>
+
+  <!-- Nose -->
+  <ellipse cx="64" cy="60" rx="4" ry="2.5" fill="#deb08a" opacity="0.45"/>
+  <path d="M60.5 60 C62 62 66 62 67.5 60" stroke="#d0a07a" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+  <!-- Mouth / Smile -->
+  <path d="M52 68 C56 76 72 76 76 68" fill="#c05040"/>
+  <path d="M52 68 C56 72 72 72 76 68" fill="white"/>
+  <path d="M52 68 C56 76 72 76 76 68" fill="none" stroke="#a84030" stroke-width="0.8"/>
+  <!-- Lower lip -->
+  <path d="M54 74 C60 78 68 78 74 74" fill="#d06858" opacity="0.45"/>
+
+  <!-- Cheek glow -->
+  <ellipse cx="40" cy="60" rx="7" ry="4" fill="#f0a898" opacity="0.18"/>
+  <ellipse cx="88" cy="60" rx="7" ry="4" fill="#f0a898" opacity="0.18"/>
+
+  <!-- Face contour shadow -->
+  <path d="M38 64 C40 76 52 84 64 84 C76 84 88 76 90 64" fill="#d8a880" opacity="0.08"/>
+</svg>

@@ -3,7 +3,8 @@ import { z } from 'zod'
 const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
   role: z.enum(['ADMIN', 'TEACHER', 'STUDENT']).optional(),
-  isActive: z.boolean().optional()
+  isActive: z.boolean().optional(),
+  isAvailableForBooking: z.boolean().optional()
 })
 
 export default defineEventHandler(async (event) => {
@@ -21,7 +22,8 @@ export default defineEventHandler(async (event) => {
     data: {
       name: body.name,
       role: body.role,
-      isActive: body.isActive
+      isActive: body.isActive,
+      isAvailableForBooking: body.isAvailableForBooking
     }
   })
 

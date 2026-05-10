@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
       country: true,
       age: true,
       isActive: true,
+      isAvailableForBooking: true,
       emailVerified: true,
       createdAt: true
     }

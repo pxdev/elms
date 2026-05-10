@@ -92,7 +92,7 @@ async function onSubmit() {
             autocomplete="name"
             class="w-full"
             :placeholder="t('auth.name')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -106,7 +106,7 @@ async function onSubmit() {
             autocomplete="email"
             class="w-full"
             :placeholder="t('auth.email')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -121,7 +121,7 @@ async function onSubmit() {
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.password')"
-          />
+          size="xl" />
         </UFormField>
 
         <USeparator class="my-2" />
@@ -134,7 +134,7 @@ async function onSubmit() {
             v-model="state.timeZone"
             class="w-full"
             :placeholder="t('auth.timeZone')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -146,7 +146,7 @@ async function onSubmit() {
             type="tel"
             class="w-full"
             :placeholder="t('auth.phone')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -157,7 +157,7 @@ async function onSubmit() {
             v-model="state.country"
             class="w-full"
             :placeholder="t('auth.country')"
-          />
+          size="xl" />
         </UFormField>
 
         <UFormField
@@ -169,7 +169,7 @@ async function onSubmit() {
             type="number"
             class="w-full"
             :placeholder="t('auth.age')"
-          />
+          size="xl" />
         </UFormField>
 
         <UAlert
@@ -185,7 +185,7 @@ async function onSubmit() {
           block
           :loading="loading"
           :disabled="loading"
-        >
+         size="xl">
           {{ t('auth.register.submit') }}
         </UButton>
       </UForm>

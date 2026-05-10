@@ -4,10 +4,6 @@ export default defineEventHandler(async () => {
     include: {
       teacher: {
         select: { id: true, name: true, email: true, avatarUrl: true }
-      },
-      variants: {
-        where: { isActive: true },
-        orderBy: { price: 'asc' }
       }
     },
     orderBy: { createdAt: 'desc' }

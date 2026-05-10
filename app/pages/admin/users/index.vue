@@ -38,6 +38,11 @@ const columns = computed<TableColumn<any>[]>(() => [
   { accessorKey: 'name', header: t('fields.name') },
   { accessorKey: 'email', header: t('fields.email') },
   { accessorKey: 'role', header: t('fields.role'), cell: ({ row }) => h('span', {}, t(`roles.${row.getValue('role')}`)) },
+  { accessorKey: 'isAvailableForBooking', header: t('fields.isAvailableForBooking'), cell: ({ row }) => {
+    const Badge = resolveComponent('UBadge') as any
+    const val = row.getValue('isAvailableForBooking')
+    return h(Badge, { label: val ? t('common.yes') : t('common.no'), color: val ? 'success' : 'neutral', variant: 'subtle', size: 'sm' })
+  } },
   { accessorKey: 'emailVerified', header: t('fields.emailVerified'), cell: ({ row }) => {
     const Badge = resolveComponent('UBadge') as any
     return h(Badge, { label: row.getValue('emailVerified') ? t('common.yes') : t('common.no'), color: row.getValue('emailVerified') ? 'success' : 'neutral', variant: 'subtle', size: 'sm' })
@@ -61,7 +66,7 @@ const columns = computed<TableColumn<any>[]>(() => [
     <div class="space-y-6">
       <AdminPageHeader :title="t('fields.name')" description="Manage system users and their roles" create-label="Add User" create-to="/admin/users/new" />
 
-      <UCard class="border-accented">
+      <UCard>
         <div class="flex items-center gap-2 mb-4">
           <UInput v-model="search" placeholder="Search users..." icon="i-lucide-search" size="xl" class="max-w-xs" />
         </div>

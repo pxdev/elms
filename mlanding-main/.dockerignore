@@ -1,0 +1,52 @@
+# Build artefacts — produced inside the image, never copied in.
+.nuxt
+.output
+.nitro
+.cache
+.data
+dist
+generated
+
+# Dependencies — installed fresh in the deps stage from package-lock.json.
+node_modules
+
+# Local environment files. They MUST never enter the image; secrets are
+# injected at runtime via Coolify env vars instead.
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Source control + tooling
+.git
+.gitignore
+.gitattributes
+.github
+
+# Editor / OS / mcp scratch
+.DS_Store
+.fleet
+.idea
+.vscode
+.playwright-mcp
+
+# Repo-only assets that don't need to ship in the runtime image:
+# — committed marketing screenshots used only on the README
+# — the dev-only standalone admin UI under 3001/
+hero-current-1440.png
+hero-current.png
+hero-fullpage.png
+hero-storefront-focus.png
+hero-storefront.png
+3001
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# CI + Docker meta
+Dockerfile
+.dockerignore
+docker-compose*.yml
+README.md

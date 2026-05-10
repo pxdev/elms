@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Female with Niqab -->
+  <defs>
+    <radialGradient id="face5" cx="0.5" cy="0.4" r="0.55"><stop offset="0%" stop-color="#fce0c4"/><stop offset="100%" stop-color="#ecc8a0"/></radialGradient>
+    <radialGradient id="bgr5" cx="0.5" cy="0.5" r="0.6"><stop offset="0%" stop-color="#8898b8"/><stop offset="100%" stop-color="#6878a0"/></radialGradient>
+  </defs>
+  <circle cx="64" cy="64" r="64" fill="url(#bgr5)"/>
+
+  <!-- Niqab body -->
+  <path d="M24 56 C24 78 30 100 38 120 L90 120 C98 100 104 78 104 56" fill="#2d3436"/>
+  <ellipse cx="64" cy="118" rx="42" ry="24" fill="#2d3436"/>
+
+  <!-- Niqab head -->
+  <ellipse cx="64" cy="48" rx="36" ry="36" fill="#2d3436"/>
+
+  <!-- Eye slit -->
+  <rect x="36" y="42" width="56" height="20" rx="10" fill="url(#face5)"/>
+
+  <!-- Niqab top edge -->
+  <path d="M36 44 C48 38 80 38 92 44" stroke="#3d4a4c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Niqab bottom edge -->
+  <path d="M36 62 C48 66 80 66 92 62" stroke="#3d4a4c" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Fabric folds -->
+  <path d="M42 70 C42 85 44 100 46 110" stroke="#3d4a4c" stroke-width="0.8" fill="none" opacity="0.3"/>
+  <path d="M86 70 C86 85 84 100 82 110" stroke="#3d4a4c" stroke-width="0.8" fill="none" opacity="0.3"/>
+  <path d="M64 68 C64 82 64 96 64 110" stroke="#3d4a4c" stroke-width="0.6" fill="none" opacity="0.2"/>
+
+  <!-- Eyebrows -->
+  <path d="M44 46 C48 42 54 42 58 45" stroke="#5a3825" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M70 45 C74 42 80 42 84 46" stroke="#5a3825" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes — more expressive since they're the only visible feature -->
+  <ellipse cx="52" cy="52" rx="7.5" ry="6.5" fill="white"/>
+  <circle cx="53.5" cy="52.5" r="5" fill="#5c3a1a"/>
+  <circle cx="53.5" cy="52.5" r="3" fill="#0e0804"/>
+  <ellipse cx="55.5" cy="50.5" rx="2" ry="1.5" fill="white" opacity="0.85"/>
+  <circle cx="52" cy="54.5" r="0.9" fill="white" opacity="0.4"/>
+  <path d="M44.5 50 C48 46.5 57 46.5 59.5 50" stroke="#2a1506" stroke-width="1.3" fill="none"/>
+
+  <ellipse cx="76" cy="52" rx="7.5" ry="6.5" fill="white"/>
+  <circle cx="77.5" cy="52.5" r="5" fill="#5c3a1a"/>
+  <circle cx="77.5" cy="52.5" r="3" fill="#0e0804"/>
+  <ellipse cx="79.5" cy="50.5" rx="2" ry="1.5" fill="white" opacity="0.85"/>
+  <circle cx="76" cy="54.5" r="0.9" fill="white" opacity="0.4"/>
+  <path d="M68.5 50 C72 46.5 81 46.5 83.5 50" stroke="#2a1506" stroke-width="1.3" fill="none"/>
+
+  <!-- Eyelashes -->
+  <path d="M44.5 49 L42.5 46.5" stroke="#2a1506" stroke-width="1" stroke-linecap="round"/>
+  <path d="M52 47.5 L52 45" stroke="#2a1506" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M59.5 49 L61.5 46.5" stroke="#2a1506" stroke-width="1" stroke-linecap="round"/>
+  <path d="M68.5 49 L66.5 46.5" stroke="#2a1506" stroke-width="1" stroke-linecap="round"/>
+  <path d="M76 47.5 L76 45" stroke="#2a1506" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M83.5 49 L85.5 46.5" stroke="#2a1506" stroke-width="1" stroke-linecap="round"/>
+</svg>

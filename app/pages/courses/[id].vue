@@ -8,17 +8,56 @@ const courseId = computed(() => Number(route.params.id))
 const { data, status } = await useFetch(() => `/api/courses/${courseId.value}`)
 const course = computed(() => data.value?.course)
 
+const { data: materialsData } = await useFetch(() => `/api/courses/${courseId.value}/materials`)
+const materials = computed(() => materialsData.value?.materials ?? [])
+
 const enrolling = ref(false)
 const enrolled = ref(false)
 const enrollError = ref<string | null>(null)
 
-async function enroll(variantId: number) {
+// Promo code state
+const promoCode = ref('')
+const validatingPromo = ref(false)
+const promoError = ref<string | null>(null)
+const validPromo = ref<{ valid: true; code: string; discountPercent: number; courseName: string | null } | null>(null)
+
+async function validatePromo() {
+  promoError.value = null
+  validPromo.value = null
+  if (!promoCode.value.trim()) return
+
+  validatingPromo.value = true
+  try {
+    const res = await $fetch('/api/promo-codes/validate', {
+      method: 'POST',
+      body: { code: promoCode.value.trim(), courseId: courseId.value }
+    })
+    if (res.valid) {
+      validPromo.value = res
+    } else {
+      promoError.value = 'Invalid promo code'
+    }
+  } catch (err: any) {
+    promoError.value = err.statusMessage || err.message || 'Invalid promo code'
+  } finally {
+    validatingPromo.value = false
+  }
+}
+
+function discountedPrice(price: number, discountPercent: number): number {
+  return Math.round(price * (1 - discountPercent / 100) * 100) / 100
+}
+
+async function enroll() {
   enrollError.value = null
   enrolling.value = true
   try {
     const res = await $fetch<{ url: string }>('/api/payments/checkout', {
       method: 'POST',
-      body: { variantId }
+      body: {
+        courseId: courseId.value,
+        promoCode: validPromo.value?.code
+      }
     })
     window.location.href = res.url
   } catch (err: unknown) {
@@ -59,9 +98,6 @@ useSeoMeta({
       </div>
 
       <div class="space-y-2 mb-6">
-        <h1 class="text-3xl font-bold">
-          {{ course.name }}
-        </h1>
         <p
           v-if="course.description"
           class="text-muted"
@@ -95,49 +131,115 @@ useSeoMeta({
         class="mb-4"
       />
 
-      <h2 class="text-xl font-semibold mb-4">
-        {{ t('courses.variants') }}
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <UCard
-          v-for="variant in course.variants"
-          :key="variant.id"
-        >
-          <div class="space-y-2">
-            <h3 class="font-semibold">
-              {{ variant.name }}
-            </h3>
-            <div class="text-sm text-muted">
-              <p>{{ t('courses.sessionsPerMonth', { count: variant.sessionsPerMonth }) }}</p>
+      <UCard class="mb-6">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-semibold">
+                {{ t('courses.enrollNow') }}
+              </h2>
+              <p class="text-sm text-muted">
+                {{ course.totalSessions }} {{ t('fields.sessions') }}
+              </p>
             </div>
-            <p class="text-2xl font-bold text-primary">
-              ${{ variant.price }}
-            </p>
+            <div class="text-right">
+              <p v-if="validPromo" class="text-2xl font-bold text-primary">
+                ${{ discountedPrice(Number(course.price), validPromo.discountPercent) }}
+              </p>
+              <p v-else class="text-2xl font-bold text-primary">
+                ${{ course.price }}
+              </p>
+              <p v-if="validPromo" class="text-sm text-muted line-through">
+                ${{ course.price }}
+              </p>
+            </div>
           </div>
 
-          <template #footer>
+          <div class="flex gap-2">
+            <UInput
+              v-model="promoCode"
+              placeholder="Promo code"
+              class="flex-1"
+              size="xl"
+            />
             <UButton
-              v-if="loggedIn"
-              block
-              color="primary"
-              :loading="enrolling"
-              :disabled="enrolled || enrolling"
-              @click="enroll(variant.id)"
-            >
-              {{ enrolled ? t('courses.enrolled') : t('courses.payAndEnroll') }}
-            </UButton>
-            <UButton
-              v-else
-              to="/login"
-              block
+              size="xl"
+              variant="soft"
               color="neutral"
-              variant="subtle"
+              :loading="validatingPromo"
+              @click="validatePromo"
             >
-              {{ t('courses.signInToEnroll') }}
+              Apply
             </UButton>
-          </template>
-        </UCard>
+          </div>
+          <UAlert
+            v-if="promoError"
+            color="error"
+            variant="soft"
+            icon="i-lucide-alert-circle"
+            :title="promoError"
+            size="sm"
+          />
+          <UAlert
+            v-if="validPromo"
+            color="success"
+            variant="soft"
+            icon="i-lucide-check-circle"
+            :title="`${validPromo.discountPercent}% off applied`"
+            size="sm"
+          />
+
+          <UButton
+            v-if="loggedIn"
+            block
+            color="primary"
+            size="xl"
+            :loading="enrolling"
+            :disabled="enrolled || enrolling"
+            @click="enroll"
+          >
+            {{ enrolled ? t('courses.enrolled') : t('courses.payAndEnroll') }}
+          </UButton>
+          <UButton
+            v-else
+            to="/login"
+            block
+            color="neutral"
+            variant="subtle"
+            size="xl"
+          >
+            {{ t('courses.signInToEnroll') }}
+          </UButton>
+        </div>
+      </UCard>
+
+      <!-- Course Materials -->
+      <div v-if="materials.length" class="space-y-4">
+        <h2 class="text-xl font-semibold">
+          {{ t('materials.title') }}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UCard v-for="material in materials" :key="material.id">
+            <div class="flex items-center gap-3">
+              <UIcon
+                :name="material.type === 'LINK' ? 'i-lucide-link' : material.type === 'PDF' ? 'i-lucide-file-text' : 'i-lucide-presentation'"
+                class="text-xl text-primary"
+              />
+              <div>
+                <a
+                  v-if="material.url"
+                  :href="material.url"
+                  target="_blank"
+                  class="font-medium hover:underline"
+                >
+                  {{ material.title }}
+                </a>
+                <p v-else class="font-medium">{{ material.title }}</p>
+                <p class="text-xs text-muted-foreground">{{ material.type }}</p>
+              </div>
+            </div>
+          </UCard>
+        </div>
       </div>
     </div>
 

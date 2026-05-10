@@ -29,7 +29,7 @@ const filtered = computed(() => {
   return (data.value?.enrollments ?? []).filter((e: any) =>
     e.user.name?.toLowerCase().includes(q) ||
     e.user.email?.toLowerCase().includes(q) ||
-    e.courseVariant.course.name?.toLowerCase().includes(q)
+    e.course.name?.toLowerCase().includes(q)
   )
 })
 
@@ -43,19 +43,23 @@ const columns = computed<TableColumn<any>[]>(() => [
     ])
   },
   {
-    accessorKey: 'courseVariant.course.name',
+    accessorKey: 'course.name',
     header: t('fields.course'),
-    cell: ({ row }) => h('span', {}, row.original.courseVariant.course.name)
-  },
-  {
-    accessorKey: 'courseVariant.name',
-    header: t('fields.variant'),
-    cell: ({ row }) => h('span', {}, row.original.courseVariant.name)
+    cell: ({ row }) => h('span', {}, row.original.course.name)
   },
   {
     accessorKey: 'status',
     header: t('fields.status'),
     cell: ({ row }) => h('span', { class: `inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusClass(row.getValue('status'))}` }, t(`enrollments.status.${row.getValue('status')}`))
+  },
+  {
+    accessorKey: 'sessions',
+    header: t('fields.sessions'),
+    cell: ({ row }) => {
+      const total = row.original.course.totalSessions ?? 0
+      const booked = (row.original.sessions ?? []).filter((s: any) => s.status !== 'CANCELLED').length
+      return h('span', {}, `${booked} / ${total}`)
+    }
   },
   {
     accessorKey: 'enrolledAt',
@@ -67,11 +71,11 @@ const columns = computed<TableColumn<any>[]>(() => [
 
 <template>
   <div>
-    <AdminPageHeader :title="t('nav.enrollments')" />
+
 
     <UCard>
       <div class="flex items-center gap-2 mb-4">
-        <UInput v-model="search" :placeholder="t('fields.name')" icon="i-lucide-search" class="max-w-xs" />
+        <UInput v-model="search" :placeholder="t('fields.name')" icon="i-lucide-search" class="max-w-xs" size="xl" />
       </div>
 
       <AdminDataTable v-model:page="page" v-model:page-size="pageSize" :data="filtered" :columns="columns" />

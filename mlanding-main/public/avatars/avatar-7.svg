@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Male Instructor with Beard -->
+  <defs>
+    <radialGradient id="face7" cx="0.5" cy="0.4" r="0.55"><stop offset="0%" stop-color="#deb08a"/><stop offset="100%" stop-color="#c89870"/></radialGradient>
+    <radialGradient id="bgr7" cx="0.5" cy="0.5" r="0.6"><stop offset="0%" stop-color="#fdd8a8"/><stop offset="100%" stop-color="#f0c080"/></radialGradient>
+  </defs>
+  <circle cx="64" cy="64" r="64" fill="url(#bgr7)"/>
+
+  <!-- Body / Polo -->
+  <ellipse cx="64" cy="118" rx="42" ry="24" fill="#e17055"/>
+  <ellipse cx="64" cy="116" rx="38" ry="20" fill="#e8785e"/>
+  <path d="M52 96 L64 104 L76 96" fill="none" stroke="#c0604a" stroke-width="1.8" stroke-linejoin="round"/>
+
+  <!-- Neck -->
+  <path d="M55 82 C55 90 58 94 64 94 C70 94 73 90 73 82Z" fill="url(#face7)"/>
+
+  <!-- Head -->
+  <ellipse cx="64" cy="52" rx="30" ry="32" fill="url(#face7)"/>
+
+  <!-- Beard -->
+  <path d="M42 60 C42 80 52 86 64 86 C76 86 86 80 86 60" fill="#1a0e06" opacity="0.55"/>
+  <path d="M42 60 C42 80 52 86 64 86 C76 86 86 80 86 60" fill="none" stroke="#1a0e06" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- Ears -->
+  <ellipse cx="34" cy="54" rx="5" ry="7" fill="#c89870"/>
+  <ellipse cx="94" cy="54" rx="5" ry="7" fill="#c89870"/>
+
+  <!-- Hair -->
+  <path d="M34 46 C34 20 46 10 64 10 C82 10 94 20 94 46" fill="#1a0e06"/>
+  <path d="M38 38 C42 14 54 8 64 8 C74 8 86 14 90 38" fill="#1a0e06"/>
+  <path d="M34 46 C33 50 34 54 36 56" fill="#1a0e06"/>
+  <path d="M94 46 C95 50 94 54 92 56" fill="#1a0e06"/>
+  <path d="M52 12 C56 20 54 30 52 36" stroke="#2a1a0e" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M74 12 C72 20 74 30 76 36" stroke="#2a1a0e" stroke-width="1" fill="none" opacity="0.3"/>
+
+  <!-- Eyebrows — thick -->
+  <path d="M44 38 C48 33 54 33 58 37" stroke="#1a0e06" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M70 37 C74 33 80 33 84 38" stroke="#1a0e06" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <ellipse cx="52" cy="48" rx="7" ry="6.5" fill="white"/>
+  <circle cx="53" cy="48.5" r="4.5" fill="#3a2510"/>
+  <circle cx="53" cy="48.5" r="2.8" fill="#0e0804"/>
+  <ellipse cx="55" cy="46.5" rx="1.8" ry="1.4" fill="white" opacity="0.8"/>
+  <circle cx="51.5" cy="50" r="0.8" fill="white" opacity="0.35"/>
+  <path d="M45 46 C48 43 56 43 59 46" stroke="#1a0e06" stroke-width="1.2" fill="none"/>
+
+  <ellipse cx="76" cy="48" rx="7" ry="6.5" fill="white"/>
+  <circle cx="77" cy="48.5" r="4.5" fill="#3a2510"/>
+  <circle cx="77" cy="48.5" r="2.8" fill="#0e0804"/>
+  <ellipse cx="79" cy="46.5" rx="1.8" ry="1.4" fill="white" opacity="0.8"/>
+  <circle cx="75.5" cy="50" r="0.8" fill="white" opacity="0.35"/>
+  <path d="M69 46 C72 43 80 43 83 46" stroke="#1a0e06" stroke-width="1.2" fill="none"/>
+
+  <!-- Nose -->
+  <ellipse cx="64" cy="60" rx="4" ry="2.5" fill="#b8885e" opacity="0.4"/>
+  <path d="M60.5 60 C62 62 66 62 67.5 60" stroke="#a88050" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+  <!-- Smile (within beard) -->
+  <path d="M54 66 C58 72 70 72 74 66" fill="#c05040"/>
+  <path d="M54 66 C58 69 70 69 74 66" fill="white"/>
+  <path d="M54 66 C58 72 70 72 74 66" fill="none" stroke="#a84030" stroke-width="0.8"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="40" cy="58" rx="6" ry="3.5" fill="#d09878" opacity="0.15"/>
+  <ellipse cx="88" cy="58" rx="6" ry="3.5" fill="#d09878" opacity="0.15"/>
+</svg>

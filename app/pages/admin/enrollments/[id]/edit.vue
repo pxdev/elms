@@ -59,10 +59,10 @@ async function onSubmit() {
 <template>
   <UContainer class="py-8">
     <div class="space-y-6">
-      <AdminPageHeader :title="t('admin.enrollments.title')" />
+
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <UCard class="lg:col-span-2 border-accented">
+        <UCard class="lg:col-span-2">
           <template #header>
             <h2 class="text-lg font-semibold">{{ t('common.edit') }}</h2>
           </template>
@@ -92,7 +92,7 @@ async function onSubmit() {
         </UCard>
 
         <div class="space-y-4">
-          <UCard class="border-accented">
+          <UCard>
             <template #header>
               <h3 class="font-semibold">{{ t('fields.student') }}</h3>
             </template>
@@ -100,22 +100,22 @@ async function onSubmit() {
             <p class="text-sm text-muted-foreground">{{ enrollment?.user.email }}</p>
           </UCard>
 
-          <UCard class="border-accented">
+          <UCard>
             <template #header>
               <h3 class="font-semibold">{{ t('fields.course') }}</h3>
             </template>
-            <p class="font-medium">{{ enrollment?.courseVariant.course.name }}</p>
-            <p class="text-sm text-muted-foreground">{{ enrollment?.courseVariant.name }}</p>
+            <p class="font-medium">{{ enrollment?.course.name }}</p>
+            <p class="text-sm text-muted-foreground">{{ t('fields.totalSessions') }}: {{ enrollment?.course.totalSessions }}</p>
           </UCard>
 
-          <UCard class="border-accented">
+          <UCard>
             <template #header>
               <h3 class="font-semibold">{{ t('fields.enrolledAt') }}</h3>
             </template>
             <p>{{ enrollment?.enrolledAt ? new Date(enrollment.enrolledAt).toLocaleDateString() : '-' }}</p>
           </UCard>
 
-          <UCard v-if="enrollment?.amountCents" class="border-accented">
+          <UCard v-if="enrollment?.amountCents">
             <template #header>
               <h3 class="font-semibold">{{ t('fields.paymentStatus') }}</h3>
             </template>

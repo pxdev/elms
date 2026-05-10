@@ -10,9 +10,6 @@ const courses = computed(() => data.value?.courses ?? [])
 <template>
   <UContainer class="py-12 space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold">
-        {{ t('courses.title') }}
-      </h1>
       <UButton
         size="xs"
         color="neutral"
@@ -64,18 +61,20 @@ const courses = computed(() => data.value?.courses ?? [])
             <span>{{ course.teacher.name ?? course.teacher.email }}</span>
           </div>
 
-          <div
-            v-if="course.variants?.length"
-            class="flex flex-wrap gap-2 pt-2"
-          >
+          <div class="flex flex-wrap gap-2 pt-2">
             <UBadge
-              v-for="variant in course.variants"
-              :key="variant.id"
               color="primary"
               variant="subtle"
               size="sm"
             >
-              {{ variant.name }} — ${{ variant.price }}
+              {{ course.totalSessions }} {{ t('fields.sessions') }}
+            </UBadge>
+            <UBadge
+              color="neutral"
+              variant="subtle"
+              size="sm"
+            >
+              ${{ course.price }}
             </UBadge>
           </div>
         </div>
