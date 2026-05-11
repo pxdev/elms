@@ -99,45 +99,142 @@ const pageTitle = computed(() => {
 
   return ''
 })
+
+// ── Sidebar state ──────────────────────────────────────────────────
+const sidebarCollapsed = ref(false)
+
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+}
+
+const sidebarWidthClass = computed(() =>
+  sidebarCollapsed.value ? 'w-[72px]' : 'w-64'
+)
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-white">
-    <aside class="w-16 bg-neutral-950 flex flex-col sticky top-0 h-screen shrink-0">
-      <div class="h-14 flex items-center justify-center border-b border-neutral-800">
-        <NuxtLink to="/">
-          <UIcon name="i-lucide-zap" class="text-primary text-xl" />
+  <div class="flex min-h-screen bg-neutral-50">
+    <!-- Sidebar -->
+    <aside
+      class="flex flex-col sticky top-0 h-screen shrink-0 bg-white border-r border-neutral-200 transition-all duration-300 ease-out"
+      :class="sidebarWidthClass"
+    >
+      <!-- Logo -->
+      <div class="h-16 flex items-center gap-3 px-4 border-b border-neutral-100 shrink-0">
+        <NuxtLink to="/" class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shrink-0">
+          <UIcon name="i-lucide-zap" class="text-white text-base" />
         </NuxtLink>
+        <span
+          class="text-sm font-semibold text-neutral-900 whitespace-nowrap overflow-hidden transition-all duration-300"
+          :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'"
+        >
+          {{ t('app.title') }}
+        </span>
+        <button
+          class="ml-auto w-7 h-7 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+          :class="sidebarCollapsed ? 'hidden' : 'flex'"
+          @click="toggleSidebar"
+        >
+          <UIcon name="i-lucide-panel-left-close" class="text-sm" />
+        </button>
       </div>
 
-      <nav class="flex-1 py-4 flex flex-col items-center gap-2">
+      <!-- Collapsed logo row with expand button -->
+      <div
+        v-if="sidebarCollapsed"
+        class="flex items-center justify-center py-2 border-b border-neutral-100 shrink-0"
+      >
+        <button
+          class="w-8 h-8 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+          @click="toggleSidebar"
+        >
+          <UIcon name="i-lucide-panel-left-open" class="text-sm" />
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 py-4 flex flex-col gap-1 px-3 overflow-y-auto">
         <UTooltip
           v-for="item in navItems"
           :key="item.to"
           :text="item.label"
           :content="{ side: 'right' }"
+          :disabled="!sidebarCollapsed"
         >
           <NuxtLink
             :to="item.to"
-            class="w-10 h-10 flex items-center justify-center rounded-lg transition-colors"
-            :class="isActive(item.to, item.exact) ? 'bg-primary text-primary-foreground' : 'text-neutral-400 hover:text-white hover:bg-neutral-800'"
+            class="flex items-center gap-3 px-3 h-10 rounded-lg transition-all duration-200 group"
+            :class="[
+              isActive(item.to, item.exact)
+                ? 'bg-primary/10 text-primary font-medium'
+                : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+            ]"
           >
-            <UIcon :name="item.icon" class="text-lg" />
+            <UIcon
+              :name="item.icon"
+              class="shrink-0 transition-colors"
+              :class="isActive(item.to, item.exact) ? 'text-lg' : 'text-lg text-neutral-400 group-hover:text-neutral-700'"
+            />
+            <span
+              class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
+              :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'"
+            >
+              {{ item.label }}
+            </span>
           </NuxtLink>
         </UTooltip>
       </nav>
 
-      <div class="py-4 flex flex-col items-center gap-2 border-t border-neutral-800">
-        <UTooltip :text="t('app.title')" :content="{ side: 'right' }">
-          <NuxtLink to="/" class="w-10 h-10 flex items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors">
-            <UIcon name="i-lucide-home" class="text-lg" />
+      <!-- Bottom section -->
+      <div class="shrink-0 border-t border-neutral-100 py-3 px-3 flex flex-col gap-1">
+        <UTooltip
+          :text="t('app.title')"
+          :content="{ side: 'right' }"
+          :disabled="!sidebarCollapsed"
+        >
+          <NuxtLink
+            to="/"
+            class="flex items-center gap-3 px-3 h-10 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 group"
+          >
+            <UIcon
+              name="i-lucide-home"
+              class="shrink-0 text-lg text-neutral-400 group-hover:text-neutral-700 transition-colors"
+            />
+            <span
+              class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
+              :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'"
+            >
+              {{ t('app.title') }}
+            </span>
           </NuxtLink>
+        </UTooltip>
+
+        <UTooltip
+          :text="t('nav.signOut')"
+          :content="{ side: 'right' }"
+          :disabled="!sidebarCollapsed"
+        >
+          <button
+            class="w-full flex items-center gap-3 px-3 h-10 rounded-lg text-neutral-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200 group cursor-pointer"
+            @click="logout"
+          >
+            <UIcon
+              name="i-lucide-log-out"
+              class="shrink-0 text-lg text-neutral-400 group-hover:text-red-500 transition-colors"
+            />
+            <span
+              class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
+              :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'"
+            >
+              {{ t('nav.signOut') }}
+            </span>
+          </button>
         </UTooltip>
       </div>
     </aside>
 
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-auto">
-      <header class="sticky top-0 z-50 h-14 border-b border-accented bg-white flex items-center justify-between px-4 shrink-0 gap-4">
+      <header class="sticky top-0 z-50 h-14 border-b border-neutral-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 shrink-0 gap-4">
         <div class="flex items-center gap-3 flex-1">
           <h1
             v-if="pageTitle"
