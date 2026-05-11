@@ -50,6 +50,7 @@ const columns = computed<TableColumn<any>[]>(() => [
       const Btn = resolveComponent('UButton') as any
       return h('div', { class: 'flex gap-1' }, [
         h(Btn, { size: 'xs', color: 'neutral', variant: 'ghost', icon: 'i-lucide-pencil', to: `/admin/courses/${row.original.id}/edit` }),
+        h(Btn, { size: 'xs', color: 'neutral', variant: 'ghost', icon: 'i-lucide-paperclip', to: `/admin/courses/${row.original.id}/materials` }),
         h(Btn, { size: 'xs', color: 'error', variant: 'ghost', icon: 'i-lucide-trash', loading: deleting.value === row.original.id, onClick: () => onDelete(row.original.id) })
       ])
     }

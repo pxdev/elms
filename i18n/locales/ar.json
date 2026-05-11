@@ -115,8 +115,10 @@
     "availability": "التوفر",
     "url": "الرابط",
     "type": "النوع",
+    "file": "الملف",
     "sessions": "الجلسات",
-    "isPrivate": "خاص"
+    "isPrivate": "خاص",
+    "lesson": "الدرس"
   },
   "common": {
     "yes": "نعم",
@@ -128,6 +130,7 @@
     "add": "إضافة",
     "edit": "تعديل",
     "delete": "حذف",
+    "remove": "إزالة",
     "manage": "إدارة",
     "active": "نشط",
     "inactive": "غير نشط",
@@ -219,13 +222,19 @@
     "noSlots": "لا توجد أوقات متاحة",
     "progress": "تقدم الجلسات"
   },
+  "lessons": {
+    "title": "الدروس",
+    "curriculum": "المناهج",
+    "noMaterials": "لا توجد مواد لهذا الدرس"
+  },
   "materials": {
     "title": "المواد",
     "addMaterial": "إضافة مادة",
     "allMaterials": "جميع المواد",
     "shared": "مشتركة",
     "private": "خاصة",
-    "noMaterials": "لا توجد مواد بعد"
+    "noMaterials": "لا توجد مواد بعد",
+    "dropFileHere": "اسحب الملف هنا أو انقر للاستعراض"
   },
   "blog": {
     "title": "المدونة",

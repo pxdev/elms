@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
   const material = await prisma.courseMaterial.create({
     data: {
       courseId,
+      lessonId: body.lessonId ?? null,
       title: body.title.trim(),
       type: body.type,
       url: body.url?.trim() ?? null,

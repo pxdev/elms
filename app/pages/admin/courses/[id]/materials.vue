@@ -12,41 +12,82 @@ useSeoMeta({ title: `${t('materials.title')} · ${t('app.title')}` })
 const { data, refresh } = await useFetch(`/api/admin/courses/${id}/materials`)
 const materials = computed(() => data.value?.materials ?? [])
 
+const { data: lessonsData } = await useFetch(`/api/admin/courses/${id}/lessons`)
+const lessons = computed(() => lessonsData.value?.lessons ?? [])
+const lessonItems = computed(() =>
+  lessons.value.map((l: any) => ({ label: l.name, value: l.id }))
+)
+
 const state = reactive({
   title: '',
   type: 'LINK' as 'LINK' | 'PDF' | 'SLIDE',
   url: '',
   isPrivate: false,
-  enrollmentId: undefined as number | undefined
+  enrollmentId: undefined as number | undefined,
+  lessonId: undefined as number | undefined
 })
 
 const adding = ref(false)
 const deleting = ref<number | null>(null)
 const errorMessage = ref<string | null>(null)
+const uploadingFile = ref(false)
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const selectedFile = ref<File | null>(null)
 
 const validate = useZodForm(courseMaterialSchema)
 const formatZodErrors = useZodErrorFormatter()
+
+function onFileChange(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0] ?? null
+  selectedFile.value = file
+  if (file && !state.title) {
+    state.title = file.name.replace(/\.[^.]+$/, '')
+  }
+}
+
+async function uploadFile(): Promise<string | null> {
+  if (!selectedFile.value) return null
+  const formData = new FormData()
+  formData.append('file', selectedFile.value)
+  const res = await $fetch('/api/upload', { method: 'POST', body: formData })
+  return (res as any).url ?? null
+}
 
 async function onSubmit() {
   errorMessage.value = null
   adding.value = true
   try {
+    let url = state.url || undefined
+    if (selectedFile.value) {
+      uploadingFile.value = true
+      const uploaded = await uploadFile()
+      if (uploaded) url = uploaded
+      uploadingFile.value = false
+    }
     await $fetch(`/api/admin/courses/${id}/materials`, {
       method: 'POST',
       body: {
         title: state.title,
         type: state.type,
-        url: state.url || undefined,
+        url: url,
         isPrivate: state.isPrivate,
-        enrollmentId: state.enrollmentId
+        enrollmentId: state.enrollmentId,
+        lessonId: state.lessonId
       }
     })
     state.title = ''
     state.url = ''
+    state.type = 'LINK'
     state.isPrivate = false
     state.enrollmentId = undefined
+    state.lessonId = undefined
+    selectedFile.value = null
+    if (fileInput.value) fileInput.value.value = ''
     await refresh()
   } catch (err: unknown) {
+    uploadingFile.value = false
     const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
     if (e.data?.issues) {
       errorMessage.value = formatZodErrors(e.data.issues)
@@ -130,6 +171,7 @@ async function onDelete(materialId: number) {
           </div>
 
           <UFormField
+            v-if="state.type === 'LINK'"
             :label="t('fields.url')"
             name="url"
           >
@@ -142,10 +184,38 @@ async function onDelete(materialId: number) {
           </UFormField>
 
           <UFormField
+            v-else
+            :label="t('fields.file')"
+          >
+            <UFileUpload
+              v-model="selectedFile"
+              accept="*"
+              :label="t('fields.file')"
+              :description="t('materials.dropFileHere')"
+              :file-delete="true"
+              :preview="true"
+              @change="onFileChange"
+            />
+          </UFormField>
+
+          <UFormField
             :label="t('fields.isPrivate')"
             name="isPrivate"
           >
             <USwitch v-model="state.isPrivate" />
+          </UFormField>
+
+          <UFormField
+            :label="t('fields.lesson')"
+            name="lessonId"
+          >
+            <USelect
+              v-model="state.lessonId"
+              :items="lessonItems"
+              size="xl"
+              class="w-full"
+              :placeholder="t('fields.lesson')"
+            />
           </UFormField>
 
           <UAlert
@@ -160,8 +230,8 @@ async function onDelete(materialId: number) {
             type="submit"
             color="primary"
             size="xl"
-            :loading="adding"
-            :disabled="adding"
+            :loading="adding || uploadingFile"
+            :disabled="adding || uploadingFile"
           >
             {{ t('common.add') }}
           </UButton>
@@ -198,6 +268,7 @@ async function onDelete(materialId: number) {
                 <p v-else class="font-medium">{{ material.title }}</p>
                 <p class="text-xs text-muted-foreground">
                   {{ material.type }} · {{ material.isPrivate ? t('materials.private') : t('materials.shared') }}
+                  <span v-if="material.lesson"> · {{ material.lesson.name }}</span>
                 </p>
               </div>
             </div>

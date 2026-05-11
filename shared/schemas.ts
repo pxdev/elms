@@ -151,10 +151,11 @@ export const updateSessionSchema = z.object({
 
 export const courseMaterialSchema = z.object({
   title: z.string().min(1),
-  type: z.enum(['LINK', 'PDF', 'SLIDE']),
+  type: z.enum(['LINK', 'VIDEO', 'PDF', 'IMAGE', 'ZIP', 'AUDIO', 'DOC', 'SLIDE']),
   url: z.string().url().optional(),
   isPrivate: z.boolean().optional(),
-  enrollmentId: z.coerce.number().int().positive().optional()
+  enrollmentId: z.coerce.number().int().positive().optional(),
+  lessonId: z.coerce.number().int().positive().optional()
 })
 
 export type LoginInput = z.infer<typeof loginSchema>

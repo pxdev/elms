@@ -11,6 +11,9 @@ export default defineEventHandler(async (event) => {
     include: {
       teacher: {
         select: { id: true, name: true, email: true, avatarUrl: true }
+      },
+      lessons: {
+        orderBy: { order: 'asc' }
       }
     }
   })

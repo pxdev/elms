@@ -24,7 +24,12 @@ enum EnrollmentStatus {
 
 enum MaterialType {
   LINK
+  VIDEO
   PDF
+  IMAGE
+  ZIP
+  AUDIO
+  DOC
   SLIDE
 }
 
@@ -85,6 +90,7 @@ model Course {
   isActive      Boolean          @default(true)
   teacherId     Int?
   teacher       User?            @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  lessons       CourseLesson[]
   materials     CourseMaterial[]
   enrollments   Enrollment[]
   promoCodes    PromoCode[]
@@ -92,10 +98,26 @@ model Course {
   updatedAt     DateTime         @updatedAt
 }
 
+model CourseLesson {
+  id          Int              @id @default(autoincrement())
+  courseId    Int
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  order       Int              @default(0)
+  materials   CourseMaterial[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([courseId])
+}
+
 model CourseMaterial {
-  id           Int          @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   courseId     Int
-  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course       Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonId     Int?
+  lesson       CourseLesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   title        String
   type         MaterialType
   url          String?

@@ -14,12 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'No file provided.' })
   }
 
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-  if (!allowedTypes.includes(file.type ?? '')) {
-    throw createError({ statusCode: 400, message: 'Invalid file type. Only images are allowed.' })
-  }
-
-  const maxSize = 5 * 1024 * 1024 // 5MB
+  const maxSize = 50 * 1024 * 1024 // 50MB
   if (file.data.length > maxSize) {
     throw createError({ statusCode: 400, message: 'File too large. Max size is 5MB.' })
   }

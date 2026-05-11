@@ -5,6 +5,8 @@ export default defineEventHandler(async (event) => {
 
   const body = await parseBody(event, createCourseSchema)
 
+  const totalSessions = body.totalSessions ?? 4
+
   const course = await prisma.course.create({
     data: {
       name: body.name.trim(),
@@ -12,9 +14,18 @@ export default defineEventHandler(async (event) => {
       imageUrl: body.imageUrl?.trim() ?? null,
       teacherId: body.teacherId ?? null,
       price: body.price ?? 0,
-      totalSessions: body.totalSessions ?? 4,
+      totalSessions,
       lsVariantId: body.lsVariantId?.trim() ?? null
     }
+  })
+
+  // Auto-create lessons
+  await prisma.courseLesson.createMany({
+    data: Array.from({ length: totalSessions }, (_, i) => ({
+      courseId: course.id,
+      name: `Session ${i + 1}`,
+      order: i
+    }))
   })
 
   return { course }

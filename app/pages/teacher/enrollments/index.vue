@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
+import { format, parseISO, isPast } from 'date-fns'
 
 const { t } = useI18n()
 
@@ -33,6 +34,43 @@ const filtered = computed(() => {
   )
 })
 
+// ── Session modal ──────────────────────────────────────────────────
+const sessionModalOpen = ref(false)
+const selectedEnrollment = ref<any>(null)
+
+function openSessionModal(enrollment: any) {
+  selectedEnrollment.value = enrollment
+  sessionModalOpen.value = true
+}
+
+const modalUpcomingSessions = computed(() => {
+  if (!selectedEnrollment.value) return []
+  return (selectedEnrollment.value.sessions ?? [])
+    .filter((s: any) => !isPast(parseISO(s.scheduledAt)) || s.status === 'SCHEDULED')
+    .sort((a: any, b: any) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
+})
+
+const modalPastSessions = computed(() => {
+  if (!selectedEnrollment.value) return []
+  return (selectedEnrollment.value.sessions ?? [])
+    .filter((s: any) => isPast(parseISO(s.scheduledAt)) && s.status !== 'SCHEDULED')
+    .sort((a: any, b: any) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
+})
+
+function formatSessionTime(dateStr: string) {
+  return format(parseISO(dateStr), 'MMM d, yyyy · h:mm a')
+}
+
+const statusColor = (status: string) => {
+  switch (status) {
+    case 'SCHEDULED': return 'primary'
+    case 'COMPLETED': return 'success'
+    case 'CANCELLED': return 'error'
+    case 'NO_SHOW': return 'warning'
+    default: return 'neutral'
+  }
+}
+
 const columns = computed<TableColumn<any>[]>(() => [
   {
     accessorKey: 'user.name',
@@ -65,6 +103,14 @@ const columns = computed<TableColumn<any>[]>(() => [
     accessorKey: 'enrolledAt',
     header: t('fields.enrolledAt'),
     cell: ({ row }) => h('span', {}, new Date(row.getValue('enrolledAt')).toLocaleDateString())
+  },
+  {
+    id: 'actions',
+    header: '',
+    cell: ({ row }) => {
+      const Btn = resolveComponent('UButton') as any
+      return h(Btn, { size: 'xs', color: 'neutral', variant: 'ghost', icon: 'i-lucide-eye', onClick: () => openSessionModal(row.original) })
+    }
   }
 ])
 </script>
@@ -80,5 +126,65 @@ const columns = computed<TableColumn<any>[]>(() => [
 
       <AdminDataTable v-model:page="page" v-model:page-size="pageSize" :data="filtered" :columns="columns" />
     </UCard>
+
+    <!-- Session detail modal -->
+    <UModal v-model:open="sessionModalOpen" :title="selectedEnrollment?.user?.name"
+    >
+      <template #body>
+        <div class="space-y-1 mb-4">
+          <p class="text-sm text-muted-foreground">{{ selectedEnrollment?.user?.email }}</p>
+          <p class="text-sm font-medium">{{ selectedEnrollment?.course?.name }}</p>
+        </div>
+
+        <div class="max-h-[50vh] overflow-auto space-y-4">
+          <div v-if="!modalUpcomingSessions.length && !modalPastSessions.length" class="text-center py-8 text-muted-foreground text-sm">
+            {{ t('sessions.noSessions') }}
+          </div>
+
+          <div v-if="modalUpcomingSessions.length" class="space-y-2">
+            <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {{ t('sessions.upcoming') }}
+            </div>
+            <div
+              v-for="session in modalUpcomingSessions"
+              :key="session.id"
+              class="flex items-center justify-between py-2 px-3 rounded-lg bg-neutral-50/50"
+            >
+              <div class="min-w-0">
+                <div class="text-sm font-medium">{{ formatSessionTime(session.scheduledAt) }}</div>
+                <div v-if="session.zoomLink" class="text-xs">
+                  <a :href="session.zoomLink" target="_blank" class="text-primary hover:underline">Zoom</a>
+                </div>
+              </div>
+              <UBadge
+                :label="t(`enrollments.status.${session.status}`)"
+                :color="statusColor(session.status)"
+                variant="soft"
+                size="xs"
+              />
+            </div>
+          </div>
+
+          <div v-if="modalPastSessions.length" class="space-y-2 pt-2 border-t">
+            <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {{ t('sessions.past') }}
+            </div>
+            <div
+              v-for="session in modalPastSessions"
+              :key="session.id"
+              class="flex items-center justify-between py-2 px-3 rounded-lg opacity-60"
+            >
+              <div class="text-sm">{{ formatSessionTime(session.scheduledAt) }}</div>
+              <UBadge
+                :label="t(`enrollments.status.${session.status}`)"
+                :color="statusColor(session.status)"
+                variant="soft"
+                size="xs"
+              />
+            </div>
+          </div>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>

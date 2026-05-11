@@ -116,8 +116,10 @@
     "availability": "Availability",
     "url": "URL",
     "type": "Type",
+    "file": "File",
     "sessions": "Sessions",
-    "isPrivate": "Private"
+    "isPrivate": "Private",
+    "lesson": "Lesson"
   },
   "common": {
     "yes": "Yes",
@@ -129,6 +131,7 @@
     "add": "Add",
     "edit": "Edit",
     "delete": "Delete",
+    "remove": "Remove",
     "manage": "Manage",
     "active": "Active",
     "inactive": "Inactive",
@@ -251,13 +254,19 @@
     "noSlots": "No available slots",
     "progress": "Session progress"
   },
+  "lessons": {
+    "title": "Lessons",
+    "curriculum": "Curriculum",
+    "noMaterials": "No materials for this lesson"
+  },
   "materials": {
     "title": "Materials",
     "addMaterial": "Add material",
     "allMaterials": "All materials",
     "shared": "Shared",
     "private": "Private",
-    "noMaterials": "No materials yet"
+    "noMaterials": "No materials yet",
+    "dropFileHere": "Drop file here or click to browse"
   },
   "admin": {
     "courses": {

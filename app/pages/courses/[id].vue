@@ -8,9 +8,6 @@ const courseId = computed(() => Number(route.params.id))
 const { data, status } = await useFetch(() => `/api/courses/${courseId.value}`)
 const course = computed(() => data.value?.course)
 
-const { data: materialsData } = await useFetch(() => `/api/courses/${courseId.value}/materials`)
-const materials = computed(() => materialsData.value?.materials ?? [])
-
 const enrolling = ref(false)
 const enrolled = ref(false)
 const enrollError = ref<string | null>(null)
@@ -66,6 +63,32 @@ async function enroll() {
   } finally {
     enrolling.value = false
   }
+}
+
+function materialIcon(type: string) {
+  switch (type) {
+    case 'LINK': return 'i-lucide-link'
+    case 'VIDEO': return 'i-lucide-video'
+    case 'PDF': return 'i-lucide-file-text'
+    case 'IMAGE': return 'i-lucide-image'
+    case 'ZIP': return 'i-lucide-file-archive'
+    case 'AUDIO': return 'i-lucide-headphones'
+    case 'DOC': return 'i-lucide-file-word'
+    case 'SLIDE': return 'i-lucide-presentation'
+    default: return 'i-lucide-file'
+  }
+}
+
+const expandedLessons = ref<Set<number>>(new Set())
+
+function toggleLesson(lessonId: number) {
+  const next = new Set(expandedLessons.value)
+  if (next.has(lessonId)) {
+    next.delete(lessonId)
+  } else {
+    next.add(lessonId)
+  }
+  expandedLessons.value = next
 }
 
 useSeoMeta({
@@ -213,32 +236,71 @@ useSeoMeta({
         </div>
       </UCard>
 
-      <!-- Course Materials -->
-      <div v-if="materials.length" class="space-y-4">
+      <!-- Course Curriculum -->
+      <div v-if="course.lessons?.length" class="space-y-4">
         <h2 class="text-xl font-semibold">
-          {{ t('materials.title') }}
+          {{ t('lessons.curriculum') }}
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UCard v-for="material in materials" :key="material.id">
-            <div class="flex items-center gap-3">
-              <UIcon
-                :name="material.type === 'LINK' ? 'i-lucide-link' : material.type === 'PDF' ? 'i-lucide-file-text' : 'i-lucide-presentation'"
-                class="text-xl text-primary"
-              />
-              <div>
-                <a
-                  v-if="material.url"
-                  :href="material.url"
-                  target="_blank"
-                  class="font-medium hover:underline"
-                >
-                  {{ material.title }}
-                </a>
-                <p v-else class="font-medium">{{ material.title }}</p>
-                <p class="text-xs text-muted-foreground">{{ material.type }}</p>
+        <div class="border rounded-lg divide-y divide-neutral-100 overflow-hidden">
+          <div
+            v-for="(lesson, idx) in course.lessons"
+            :key="lesson.id"
+          >
+            <button
+              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left"
+              @click="toggleLesson(lesson.id)"
+            >
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+                {{ idx + 1 }}
               </div>
+              <span class="font-medium flex-1">{{ lesson.name }}</span>
+              <UIcon
+                :name="expandedLessons.has(lesson.id) ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+                class="text-muted-foreground"
+              />
+            </button>
+            <div
+              v-show="expandedLessons.has(lesson.id)"
+              class="px-4 pb-4 space-y-2"
+            >
+              <p v-if="lesson.description" class="text-sm text-muted-foreground px-11">
+                {{ lesson.description }}
+              </p>
+              <div v-if="lesson.materials?.length" class="space-y-2 px-11">
+                <div
+                  v-for="material in lesson.materials"
+                  :key="material.id"
+                  class="flex items-center gap-3 p-3 rounded-lg border border-neutral-100 hover:border-primary/30 transition-colors"
+                >
+                  <UIcon :name="materialIcon(material.type)" class="text-lg text-primary" />
+                  <div class="flex-1 min-w-0">
+                    <a
+                      v-if="material.url"
+                      :href="material.url"
+                      target="_blank"
+                      class="font-medium text-sm hover:underline block truncate"
+                    >
+                      {{ material.title }}
+                    </a>
+                    <p v-else class="font-medium text-sm truncate">{{ material.title }}</p>
+                    <p class="text-xs text-muted-foreground">{{ material.type }}</p>
+                  </div>
+                  <UButton
+                    v-if="material.url"
+                    size="xs"
+                    variant="ghost"
+                    color="primary"
+                    icon="i-lucide-download"
+                    :to="material.url"
+                    target="_blank"
+                  />
+                </div>
+              </div>
+              <p v-else class="text-sm text-muted-foreground px-11">
+                {{ t('lessons.noMaterials') }}
+              </p>
             </div>
-          </UCard>
+          </div>
         </div>
       </div>
     </div>

@@ -6,11 +6,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid course ID.' })
   }
 
-  const materials = await prisma.courseMaterial.findMany({
+  const lessons = await prisma.courseLesson.findMany({
     where: { courseId },
-    orderBy: { createdAt: 'desc' },
-    include: { lesson: { select: { id: true, name: true } } }
+    orderBy: { order: 'asc' },
+    include: {
+      materials: true
+    }
   })
 
-  return { materials }
+  return { lessons }
 })
