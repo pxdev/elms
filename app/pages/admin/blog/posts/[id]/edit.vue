@@ -3,6 +3,8 @@ import { updateBlogPostSchema } from '~~/shared/schemas'
 
 const { t } = useI18n()
 const route = useRoute()
+const { createImageHandler } = useEditorImageUpload()
+const editorHandlers = { image: createImageHandler() }
 const id = Number(route.params.id)
 
 definePageMeta({ authorize: ['ADMIN'] })
@@ -180,6 +182,7 @@ async function onSubmit() {
           <UEditor
             v-slot="{ editor }"
             v-model="state.description"
+            :handlers="editorHandlers"
             :placeholder="t('fields.description')"
             class="w-full min-h-[300px] [&_.ProseMirror]:min-h-[300px] ring-1 ring-default rounded-lg"
           >
@@ -204,6 +207,7 @@ async function onSubmit() {
                 ],
                 [
                   { kind: 'link', icon: 'i-lucide-link' },
+                  { kind: 'image', icon: 'i-lucide-image' },
                   { kind: 'blockquote', icon: 'i-lucide-quote' }
                 ],
                 [
@@ -231,6 +235,7 @@ async function onSubmit() {
           <UEditor
             v-slot="{ editor }"
             v-model="state.content"
+            :handlers="editorHandlers"
             :placeholder="t('fields.content')"
             class="w-full min-h-[400px] [&_.ProseMirror]:min-h-[400px] ring-1 ring-default rounded-lg"
           >
@@ -255,6 +260,7 @@ async function onSubmit() {
                 ],
                 [
                   { kind: 'link', icon: 'i-lucide-link' },
+                  { kind: 'image', icon: 'i-lucide-image' },
                   { kind: 'blockquote', icon: 'i-lucide-quote' }
                 ],
                 [

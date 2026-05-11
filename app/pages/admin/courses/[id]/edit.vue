@@ -3,6 +3,8 @@ import { updateCourseSchema } from '~~/shared/schemas'
 
 const { t } = useI18n()
 const route = useRoute()
+const { createImageHandler } = useEditorImageUpload()
+const editorHandlers = { image: createImageHandler() }
 
 const id = Number(route.params.id)
 
@@ -166,6 +168,51 @@ async function deleteResource(materialId: number) {
 }
 
 const managingSessions = ref(false)
+
+const dragSourceIndex = ref<number | null>(null)
+const dragOverIndex = ref<number | null>(null)
+
+function onDragStart(idx: number) {
+  dragSourceIndex.value = idx
+}
+
+function onDragOver(e: DragEvent, idx: number) {
+  e.preventDefault()
+  if (dragSourceIndex.value === null || dragSourceIndex.value === idx) return
+  dragOverIndex.value = idx
+}
+
+function onDragLeave() {
+  dragOverIndex.value = null
+}
+
+async function onDrop() {
+  if (dragSourceIndex.value === null || dragOverIndex.value === null) {
+    dragSourceIndex.value = null
+    dragOverIndex.value = null
+    return
+  }
+  const source = dragSourceIndex.value
+  const target = dragOverIndex.value
+  dragSourceIndex.value = null
+  dragOverIndex.value = null
+
+  const items = [...lessons.value]
+  const moved = items.splice(source, 1)[0]!
+  items.splice(target, 0, moved)
+  const ids = items.map((l: any) => l.id)
+
+  try {
+    await $fetch(`/api/admin/courses/${id}/lessons/reorder`, {
+      method: 'POST',
+      body: { lessonIds: ids }
+    })
+    await refreshLessons()
+  } catch (err: any) {
+    alert(err.data?.message || err.message)
+    await refreshLessons()
+  }
+}
 
 async function addSession() {
   managingSessions.value = true
@@ -333,12 +380,14 @@ async function onSubmitCourse() {
             :label="t('fields.description')"
             name="description"
           >
-            <UTextarea
-              v-model="courseState.description"
-              size="xl"
-              class="w-full"
-              :placeholder="t('fields.description')"
-            />
+            <ClientOnly>
+              <UEditor
+                v-model="courseState.description"
+                :handlers="editorHandlers"
+                :placeholder="t('fields.description')"
+                class="w-full min-h-[200px]"
+              />
+            </ClientOnly>
           </UFormField>
 
           <UFormField
@@ -472,10 +521,16 @@ async function onSubmitCourse() {
           <UCard
             v-for="(lesson, idx) in lessons"
             :key="lesson.id"
+            draggable="true"
+            class="cursor-move"
+            @dragstart="onDragStart(idx)"
+            @dragover="onDragOver($event, idx)"
+            @drop="onDrop()"
           >
             <div class="space-y-4">
               <!-- Lesson Header -->
               <div class="flex items-center gap-3">
+                <UIcon name="i-lucide-grip-vertical" class="text-muted-foreground cursor-move" />
                 <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
                   {{ idx + 1 }}
                 </div>

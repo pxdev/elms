@@ -2,6 +2,8 @@
 import { createCourseSchema } from '~~/shared/schemas'
 
 const { t } = useI18n()
+const { createImageHandler } = useEditorImageUpload()
+const editorHandlers = { image: createImageHandler() }
 
 definePageMeta({ authorize: ['ADMIN'] })
 
@@ -88,12 +90,14 @@ async function onSubmit() {
           :label="t('fields.description')"
           name="description"
         >
-          <UTextarea
-            v-model="state.description"
-            size="xl"
-            class="w-full"
-            :placeholder="t('fields.description')"
-          />
+          <ClientOnly>
+            <UEditor
+              v-model="state.description"
+              :handlers="editorHandlers"
+              :placeholder="t('fields.description')"
+              class="w-full min-h-[200px]"
+            />
+          </ClientOnly>
         </UFormField>
 
         <UFormField
