@@ -3,8 +3,8 @@ import { updateBlogPostSchema } from '~~/shared/schemas'
 
 const { t } = useI18n()
 const route = useRoute()
-const { createImageHandler } = useEditorImageUpload()
-const editorHandlers = { image: createImageHandler() }
+const { ImageUpload, imageUploadHandler } = useEditorImageUpload()
+const editorHandlers = { imageUpload: imageUploadHandler }
 const id = Number(route.params.id)
 
 definePageMeta({ authorize: ['ADMIN'] })
@@ -182,6 +182,7 @@ async function onSubmit() {
           <UEditor
             v-slot="{ editor }"
             v-model="state.description"
+            :extensions="[ImageUpload]"
             :handlers="editorHandlers"
             :placeholder="t('fields.description')"
             class="w-full min-h-[300px] [&_.ProseMirror]:min-h-[300px] ring-1 ring-default rounded-lg"
@@ -201,13 +202,8 @@ async function onSubmit() {
                   { kind: 'mark', mark: 'underline', icon: 'i-lucide-underline' }
                 ],
                 [
-                  { kind: 'textAlign', align: 'left', icon: 'i-lucide-align-left' },
-                  { kind: 'textAlign', align: 'center', icon: 'i-lucide-align-center' },
-                  { kind: 'textAlign', align: 'right', icon: 'i-lucide-align-right' }
-                ],
-                [
                   { kind: 'link', icon: 'i-lucide-link' },
-                  { kind: 'image', icon: 'i-lucide-image' },
+                  { kind: 'imageUpload', icon: 'i-lucide-image' },
                   { kind: 'blockquote', icon: 'i-lucide-quote' }
                 ],
                 [
@@ -224,7 +220,9 @@ async function onSubmit() {
                   { kind: 'clearFormatting', icon: 'i-lucide-eraser' }
                 ]
               ]"
+              class="border-b border-muted px-3 py-2"
             />
+            <UEditorDragHandle :editor="editor" />
           </UEditor>
         </UFormField>
 
@@ -235,6 +233,7 @@ async function onSubmit() {
           <UEditor
             v-slot="{ editor }"
             v-model="state.content"
+            :extensions="[ImageUpload]"
             :handlers="editorHandlers"
             :placeholder="t('fields.content')"
             class="w-full min-h-[400px] [&_.ProseMirror]:min-h-[400px] ring-1 ring-default rounded-lg"
@@ -254,13 +253,8 @@ async function onSubmit() {
                   { kind: 'mark', mark: 'underline', icon: 'i-lucide-underline' }
                 ],
                 [
-                  { kind: 'textAlign', align: 'left', icon: 'i-lucide-align-left' },
-                  { kind: 'textAlign', align: 'center', icon: 'i-lucide-align-center' },
-                  { kind: 'textAlign', align: 'right', icon: 'i-lucide-align-right' }
-                ],
-                [
                   { kind: 'link', icon: 'i-lucide-link' },
-                  { kind: 'image', icon: 'i-lucide-image' },
+                  { kind: 'imageUpload', icon: 'i-lucide-image' },
                   { kind: 'blockquote', icon: 'i-lucide-quote' }
                 ],
                 [
@@ -277,7 +271,9 @@ async function onSubmit() {
                   { kind: 'clearFormatting', icon: 'i-lucide-eraser' }
                 ]
               ]"
+              class="border-b border-muted px-3 py-2"
             />
+            <UEditorDragHandle :editor="editor" />
           </UEditor>
         </UFormField>
 

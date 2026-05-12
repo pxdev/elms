@@ -2,8 +2,8 @@
 import { createCourseSchema } from '~~/shared/schemas'
 
 const { t } = useI18n()
-const { createImageHandler } = useEditorImageUpload()
-const editorHandlers = { image: createImageHandler() }
+const { ImageUpload, imageUploadHandler } = useEditorImageUpload()
+const editorHandlers = { imageUpload: imageUploadHandler }
 
 definePageMeta({ authorize: ['ADMIN'] })
 
@@ -92,11 +92,50 @@ async function onSubmit() {
         >
           <ClientOnly>
             <UEditor
+              v-slot="{ editor }"
               v-model="state.description"
+              :extensions="[ImageUpload]"
               :handlers="editorHandlers"
               :placeholder="t('fields.description')"
-              class="w-full min-h-[200px]"
-            />
+              class="w-full min-h-[200px] [&_.ProseMirror]:min-h-[200px] ring-1 ring-default rounded-lg"
+            >
+              <UEditorToolbar
+                :editor="editor"
+                :items="[
+                  [
+                    { kind: 'heading', level: 1, icon: 'i-lucide-heading-1' },
+                    { kind: 'heading', level: 2, icon: 'i-lucide-heading-2' },
+                    { kind: 'heading', level: 3, icon: 'i-lucide-heading-3' }
+                  ],
+                  [
+                    { kind: 'mark', mark: 'bold', icon: 'i-lucide-bold' },
+                    { kind: 'mark', mark: 'italic', icon: 'i-lucide-italic' },
+                    { kind: 'mark', mark: 'strike', icon: 'i-lucide-strikethrough' },
+                    { kind: 'mark', mark: 'underline', icon: 'i-lucide-underline' }
+                  ],
+                  [
+                    { kind: 'link', icon: 'i-lucide-link' },
+                    { kind: 'imageUpload', icon: 'i-lucide-image' },
+                    { kind: 'blockquote', icon: 'i-lucide-quote' }
+                  ],
+                  [
+                    { kind: 'orderedList', icon: 'i-lucide-list-ordered' },
+                    { kind: 'bulletList', icon: 'i-lucide-list' }
+                  ],
+                  [
+                    { kind: 'codeBlock', icon: 'i-lucide-code-2' },
+                    { kind: 'horizontalRule', icon: 'i-lucide-minus' }
+                  ],
+                  [
+                    { kind: 'undo', icon: 'i-lucide-undo-2' },
+                    { kind: 'redo', icon: 'i-lucide-redo-2' },
+                    { kind: 'clearFormatting', icon: 'i-lucide-eraser' }
+                  ]
+                ]"
+                class="border-b border-muted px-3 py-2"
+              />
+              <UEditorDragHandle :editor="editor" />
+            </UEditor>
           </ClientOnly>
         </UFormField>
 
