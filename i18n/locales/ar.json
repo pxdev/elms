@@ -227,6 +227,9 @@
     "curriculum": "المناهج",
     "noMaterials": "لا توجد مواد لهذا الدرس"
   },
+  "imageUpload": {
+    "acceptedFormats": "المسموح: JPG، PNG، GIF، WebP. الحد الأقصى 5 ميجابايت."
+  },
   "materials": {
     "title": "المواد",
     "addMaterial": "إضافة مادة",
@@ -235,6 +238,18 @@
     "private": "خاصة",
     "noMaterials": "لا توجد مواد بعد",
     "dropFileHere": "اسحب الملف هنا أو انقر للاستعراض"
+  },
+  "portal": {
+    "heroTitle": "تعلم وطور مهاراتك مع دورات خبرائنا",
+    "heroDescription": "استكشف دوراتنا المختارة ومقالاتنا الثاقبة لتطوير مهاراتك.",
+    "browseCourses": "استعرض الدورات",
+    "readBlog": "اقرأ المدونة",
+    "featuredCourses": "دورات مميزة",
+    "coursesSubtitle": "دورات مختارة لمساعدتك على البدء",
+    "viewAllCourses": "عرض جميع الدورات",
+    "recentPosts": "أحدث المقالات",
+    "postsSubtitle": "أحدث الرؤى من مدونتنا",
+    "viewAllPosts": "عرض جميع المقالات"
   },
   "blog": {
     "title": "المدونة",

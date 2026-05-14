@@ -195,6 +195,18 @@
     },
     "paymentSuccessTitle": "Payment successful"
   },
+  "portal": {
+    "heroTitle": "Learn and grow with expert-led courses",
+    "heroDescription": "Explore our curated courses and insightful articles to advance your skills.",
+    "browseCourses": "Browse Courses",
+    "readBlog": "Read Blog",
+    "featuredCourses": "Featured Courses",
+    "coursesSubtitle": "Hand-picked courses to get you started",
+    "viewAllCourses": "View all courses",
+    "recentPosts": "Recent Posts",
+    "postsSubtitle": "Latest insights from our blog",
+    "viewAllPosts": "View all posts"
+  },
   "blog": {
     "title": "Blog",
     "description": "Latest news, tips, and insights.",
@@ -258,6 +270,9 @@
     "title": "Lessons",
     "curriculum": "Curriculum",
     "noMaterials": "No materials for this lesson"
+  },
+  "imageUpload": {
+    "acceptedFormats": "Accepted: JPG, PNG, GIF, WebP. Max file size 5MB."
   },
   "materials": {
     "title": "Materials",

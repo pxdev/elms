@@ -261,7 +261,7 @@ function buildRanges(): { date: string; startTime: number; endTime: number }[] {
 
 const saving = ref(false)
 
-async function save() {
+const save = useThrottleFn(async () => {
   saving.value = true
   try {
     const slots = buildRanges()
@@ -275,7 +275,7 @@ async function save() {
   } finally {
     saving.value = false
   }
-}
+}, 1000)
 
 function clearWeek() {
   for (const day of weekDays.value) {

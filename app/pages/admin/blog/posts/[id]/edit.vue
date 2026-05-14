@@ -24,10 +24,10 @@ const categoryItems = computed(() =>
   }))
 )
 
-const tagItems = computed(() =>
+const tagSuggestions = computed(() =>
   (tagsData.value?.tags ?? []).map((t) => ({
-    label: t.name,
-    value: t.id
+    id: t.id,
+    name: t.name
   }))
 )
 
@@ -39,7 +39,7 @@ const state = reactive({
   imageUrl: '',
   published: false,
   categoryId: undefined as number | undefined,
-  tagIds: [] as number[]
+  tags: [] as { id?: number; name: string }[]
 })
 
 watchEffect(() => {
@@ -51,7 +51,7 @@ watchEffect(() => {
     state.imageUrl = post.value.imageUrl ?? ''
     state.published = post.value.published ?? false
     state.categoryId = post.value.categoryId ?? undefined
-    state.tagIds = post.value.tags?.map((pt: any) => pt.tagId) ?? []
+    state.tags = post.value.tags?.map((pt: any) => ({ id: pt.tagId, name: pt.tag.name })) ?? []
   }
 })
 
@@ -61,7 +61,7 @@ const errorMessage = ref<string | null>(null)
 const validate = useZodForm(updateBlogPostSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   loading.value = true
   try {
@@ -75,7 +75,7 @@ async function onSubmit() {
         imageUrl: state.imageUrl || undefined,
         published: state.published,
         categoryId: state.categoryId,
-        tagIds: state.tagIds.length ? state.tagIds : []
+        tags: state.tags.length ? state.tags : []
       }
     })
     await refresh()
@@ -90,7 +90,7 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>
@@ -136,14 +136,11 @@ async function onSubmit() {
 
         <UFormField
           :label="t('fields.tags')"
-          name="tagIds"
+          name="tags"
         >
-          <USelect
-            v-model="state.tagIds"
-            :items="tagItems"
-            multiple
-            size="xl"
-            class="w-full"
+          <TagInput
+            v-model="state.tags"
+            :suggestions="tagSuggestions"
             :placeholder="t('fields.tags')"
           />
         </UFormField>

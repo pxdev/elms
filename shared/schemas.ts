@@ -102,6 +102,11 @@ export const updateBlogTagSchema = z.object({
   name: z.string().min(1).optional()
 })
 
+export const blogPostTagSchema = z.object({
+  id: z.number().int().positive().optional(),
+  name: z.string().min(1)
+})
+
 export const createBlogPostSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
@@ -110,7 +115,7 @@ export const createBlogPostSchema = z.object({
   imageUrl: z.union([z.string().url(), z.literal('')]).optional(),
   published: z.boolean().optional(),
   categoryId: z.coerce.number().int().positive().optional(),
-  tagIds: z.array(z.coerce.number().int().positive()).optional()
+  tags: z.array(blogPostTagSchema).optional()
 })
 
 export const updateBlogPostSchema = z.object({
@@ -121,7 +126,7 @@ export const updateBlogPostSchema = z.object({
   imageUrl: z.union([z.string().url(), z.literal('')]).optional(),
   published: z.boolean().optional(),
   categoryId: z.coerce.number().int().positive().nullish(),
-  tagIds: z.array(z.coerce.number().int().positive()).optional()
+  tags: z.array(blogPostTagSchema).optional()
 })
 
 export const teacherAvailabilitySchema = z.object({

@@ -39,11 +39,30 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (body.tagIds !== undefined) {
+  if (body.tags !== undefined) {
     await prisma.blogPostTag.deleteMany({ where: { postId: id } })
-    if (body.tagIds.length) {
+
+    const tagConnections: { tagId: number }[] = []
+    for (const tag of body.tags) {
+      if (tag.id) {
+        tagConnections.push({ tagId: tag.id })
+      } else {
+        const tagSlug = await generateUniqueSlug(tag.name, async (s) => {
+          const existingTag = await prisma.blogTag.findUnique({ where: { slug: s } })
+          return !!existingTag
+        })
+        const newTag = await prisma.blogTag.upsert({
+          where: { name: tag.name.trim() },
+          update: {},
+          create: { name: tag.name.trim(), slug: tagSlug }
+        })
+        tagConnections.push({ tagId: newTag.id })
+      }
+    }
+
+    if (tagConnections.length) {
       await prisma.blogPostTag.createMany({
-        data: body.tagIds.map(tagId => ({ postId: id, tagId }))
+        data: tagConnections.map((tc) => ({ postId: id, tagId: tc.tagId }))
       })
     }
   }

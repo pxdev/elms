@@ -11,6 +11,27 @@ export default defineEventHandler(async (event) => {
     return !!existing
   })
 
+  const tagConnections: { tagId: number }[] = []
+
+  if (body.tags?.length) {
+    for (const tag of body.tags) {
+      if (tag.id) {
+        tagConnections.push({ tagId: tag.id })
+      } else {
+        const tagSlug = await generateUniqueSlug(tag.name, async (s) => {
+          const existing = await prisma.blogTag.findUnique({ where: { slug: s } })
+          return !!existing
+        })
+        const newTag = await prisma.blogTag.upsert({
+          where: { name: tag.name.trim() },
+          update: {},
+          create: { name: tag.name.trim(), slug: tagSlug }
+        })
+        tagConnections.push({ tagId: newTag.id })
+      }
+    }
+  }
+
   const post = await prisma.blogPost.create({
     data: {
       title: body.title.trim(),
@@ -23,10 +44,8 @@ export default defineEventHandler(async (event) => {
       publishedAt: body.published ? new Date() : null,
       authorId: session.user.id,
       categoryId: body.categoryId ?? null,
-      tags: body.tagIds?.length
-        ? {
-            create: body.tagIds.map(tagId => ({ tagId }))
-          }
+      tags: tagConnections.length
+        ? { create: tagConnections }
         : undefined
     },
     include: {

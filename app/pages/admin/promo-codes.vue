@@ -60,7 +60,7 @@ function openEdit(c: any) {
   showModal.value = true
 }
 
-async function save() {
+const save = useThrottleFn(async () => {
   saving.value = true
   try {
     const body = {
@@ -86,7 +86,7 @@ async function save() {
   } finally {
     saving.value = false
   }
-}
+}, 1000)
 
 async function toggleActive(c: any) {
   try {

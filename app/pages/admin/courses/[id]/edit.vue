@@ -36,6 +36,7 @@ const courseState = reactive({
 
 const savingCourse = ref(false)
 const courseError = ref<string | null>(null)
+const toast = useToast()
 
 // ── Lessons ────────────────────────────────────────────────────────
 const { data: lessonsData, refresh: refreshLessons } = await useFetch(`/api/admin/courses/${id}/lessons`)
@@ -50,7 +51,7 @@ function startEditLesson(lesson: any) {
   editingName.value = lesson.name
 }
 
-async function saveLessonName(lessonId: number) {
+const saveLessonName = useThrottleFn(async (lessonId: number) => {
   if (!editingName.value.trim()) return
   savingLesson.value = true
   try {
@@ -65,7 +66,7 @@ async function saveLessonName(lessonId: number) {
   } finally {
     savingLesson.value = false
   }
-}
+}, 1000)
 
 // ── Lesson Resources ───────────────────────────────────────────────
 const resourceModalOpen = ref(false)
@@ -110,7 +111,7 @@ async function uploadResourceFile(): Promise<string | null> {
   return (res as any).url ?? null
 }
 
-async function saveResource() {
+const saveResource = useThrottleFn(async () => {
   if (!activeLessonId.value) return
   if (!resourceState.title.trim()) {
     resourceError.value = 'Title is required'
@@ -152,7 +153,7 @@ async function saveResource() {
   } finally {
     addingResource.value = false
   }
-}
+}, 1000)
 
 async function deleteResource(materialId: number) {
   if (!confirm(t('common.delete'))) return
@@ -304,7 +305,7 @@ watchEffect(() => {
 const validateCourse = useZodForm(updateCourseSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmitCourse() {
+const onSubmitCourse = useThrottleFn(async () => {
   courseError.value = null
   savingCourse.value = true
   try {
@@ -323,6 +324,7 @@ async function onSubmitCourse() {
     })
     await refresh()
     await refreshLessons()
+    toast.add({ title: t('common.saved'), color: 'success' })
   } catch (err: unknown) {
     const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
     if (e.data?.issues) {
@@ -333,7 +335,7 @@ async function onSubmitCourse() {
   } finally {
     savingCourse.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

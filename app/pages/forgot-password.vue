@@ -15,7 +15,7 @@ const errorMessage = ref<string | null>(null)
 const validate = useZodForm(forgotPasswordSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   loading.value = true
   try {
@@ -34,7 +34,7 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

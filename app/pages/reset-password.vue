@@ -30,7 +30,7 @@ const resetPasswordClientSchema = z.object({
 const validate = useZodForm(resetPasswordClientSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
 
   if (!token.value) {
@@ -55,7 +55,7 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

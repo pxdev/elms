@@ -55,7 +55,7 @@ async function uploadFile(): Promise<string | null> {
   return (res as any).url ?? null
 }
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   adding.value = true
   try {
@@ -97,7 +97,7 @@ async function onSubmit() {
   } finally {
     adding.value = false
   }
-}
+}, 1000)
 
 async function onDelete(materialId: number) {
   if (!confirm(t('common.delete'))) return

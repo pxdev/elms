@@ -34,7 +34,7 @@ const saving = ref(false)
 const errorMessage = ref<string | null>(null)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   saving.value = true
   try {
@@ -54,7 +54,7 @@ async function onSubmit() {
   } finally {
     saving.value = false
   }
-}
+}, 1000)
 
 // ── Sessions ───────────────────────────────────────────────────────
 const showAddSession = ref(false)
@@ -87,7 +87,7 @@ function formatSessionTime(dateStr: string) {
   return format(parseISO(dateStr), 'MMM d, yyyy · h:mm a')
 }
 
-async function addSession() {
+const addSession = useThrottleFn(async () => {
   sessionError.value = null
   addingSession.value = true
   try {
@@ -109,7 +109,7 @@ async function addSession() {
   } finally {
     addingSession.value = false
   }
-}
+}, 1000)
 
 async function deleteSession(sessionId: number) {
   if (!confirm(t('common.delete') + '?')) return

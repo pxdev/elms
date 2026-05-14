@@ -29,11 +29,12 @@ const teacherItems = computed(() =>
 
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
+const toast = useToast()
 
 const validate = useZodForm(createCourseSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   loading.value = true
   try {
@@ -49,6 +50,7 @@ async function onSubmit() {
         lsVariantId: state.lsVariantId || undefined
       }
     })
+    toast.add({ title: t('common.saved'), color: 'success' })
     await navigateTo('/admin/courses')
   } catch (err: unknown) {
     const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
@@ -60,7 +62,7 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

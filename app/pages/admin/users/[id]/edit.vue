@@ -30,7 +30,7 @@ const saving = ref(false)
 const errorMessage = ref<string | null>(null)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   saving.value = true
   try {
@@ -55,7 +55,7 @@ async function onSubmit() {
   } finally {
     saving.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

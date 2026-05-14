@@ -49,7 +49,7 @@ const successMessage = ref<string | null>(null)
 const validate = useZodForm(updateProfileSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   successMessage.value = null
   saving.value = true
@@ -81,7 +81,7 @@ async function onSubmit() {
   } finally {
     saving.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>

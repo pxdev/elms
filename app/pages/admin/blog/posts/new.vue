@@ -17,7 +17,7 @@ const state = reactive({
   imageUrl: '',
   published: false,
   categoryId: undefined as number | undefined,
-  tagIds: [] as number[]
+  tags: [] as { id?: number; name: string }[]
 })
 
 const { data: categoriesData } = await useFetch('/api/admin/blog/categories')
@@ -30,10 +30,10 @@ const categoryItems = computed(() =>
   }))
 )
 
-const tagItems = computed(() =>
+const tagSuggestions = computed(() =>
   (tagsData.value?.tags ?? []).map((t) => ({
-    label: t.name,
-    value: t.id
+    id: t.id,
+    name: t.name
   }))
 )
 
@@ -43,7 +43,7 @@ const errorMessage = ref<string | null>(null)
 const validate = useZodForm(createBlogPostSchema)
 const formatZodErrors = useZodErrorFormatter()
 
-async function onSubmit() {
+const onSubmit = useThrottleFn(async () => {
   errorMessage.value = null
   loading.value = true
   try {
@@ -57,7 +57,7 @@ async function onSubmit() {
         imageUrl: state.imageUrl || undefined,
         published: state.published,
         categoryId: state.categoryId,
-        tagIds: state.tagIds.length ? state.tagIds : undefined
+        tags: state.tags.length ? state.tags : undefined
       }
     })
     await navigateTo('/admin/blog/posts')
@@ -71,7 +71,7 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
-}
+}, 1000)
 </script>
 
 <template>
@@ -112,14 +112,11 @@ async function onSubmit() {
 
         <UFormField
           :label="t('fields.tags')"
-          name="tagIds"
+          name="tags"
         >
-          <USelect
-            v-model="state.tagIds"
-            :items="tagItems"
-            multiple
-            size="xl"
-            class="w-full"
+          <TagInput
+            v-model="state.tags"
+            :suggestions="tagSuggestions"
             :placeholder="t('fields.tags')"
           />
         </UFormField>
