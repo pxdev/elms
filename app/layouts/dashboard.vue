@@ -19,6 +19,7 @@ const navItems = computed(() => {
       { label: t('fields.name'), icon: 'i-lucide-user-cog', to: '/admin/users' },
       { label: 'Promo Codes', icon: 'i-lucide-ticket-percent', to: '/admin/promo-codes' },
       { label: t('nav.blog'), icon: 'i-lucide-newspaper', to: '/admin/blog' },
+      { label: t('support.adminTitle'), icon: 'i-lucide-life-buoy', to: '/admin/support' },
       { label: t('teacher.availability'), icon: 'i-lucide-calendar-clock', to: '/teacher/availability' },
       { label: t('teacher.sessions'), icon: 'i-lucide-calendar-days', to: '/teacher/sessions' }
     ]
@@ -35,7 +36,8 @@ const navItems = computed(() => {
   return [
     { label: t('nav.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/dashboard', exact: true },
     { label: t('nav.courses'), icon: 'i-lucide-book-open', to: '/courses' },
-    { label: t('nav.enrollments'), icon: 'i-lucide-graduation-cap', to: '/enrollments' }
+    { label: t('nav.enrollments'), icon: 'i-lucide-graduation-cap', to: '/enrollments' },
+    { label: t('support.title'), icon: 'i-lucide-life-buoy', to: '/support' }
   ]
 })
 
@@ -46,6 +48,11 @@ const isActive = (to: string, exact?: boolean) => {
 }
 
 const searchOpen = ref(false)
+const mobileMenuItems = computed(() => [
+  navItems.value.map(item => ({ label: item.label, icon: item.icon, to: item.to })),
+  [{ label: t('nav.profile'), icon: 'i-lucide-user', to: '/profile' }],
+  [{ label: t('nav.signOut'), icon: 'i-lucide-log-out', onSelect: logout }]
+])
 
 const searchGroups = computed(() => {
   const role = user.value?.role
@@ -116,7 +123,7 @@ const sidebarWidthClass = computed(() =>
   <div class="flex min-h-screen bg-neutral-50">
     <!-- Sidebar -->
     <aside
-      class="flex flex-col sticky top-0 h-screen shrink-0 bg-white border-r border-neutral-200 transition-all duration-300 ease-out"
+      class="hidden md:flex flex-col sticky top-0 h-screen shrink-0 bg-white border-e border-neutral-200 transition-all duration-300 ease-out"
       :class="sidebarWidthClass"
     >
       <!-- Logo -->
@@ -131,7 +138,8 @@ const sidebarWidthClass = computed(() =>
           {{ t('app.title') }}
         </span>
         <button
-          class="ml-auto w-7 h-7 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+          class="ms-auto w-7 h-7 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+          :aria-label="t('nav.collapseSidebar')"
           :class="sidebarCollapsed ? 'hidden' : 'flex'"
           @click="toggleSidebar"
         >
@@ -146,6 +154,7 @@ const sidebarWidthClass = computed(() =>
       >
         <button
           class="w-8 h-8 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+          :aria-label="t('nav.expandSidebar')"
           @click="toggleSidebar"
         >
           <UIcon name="i-lucide-panel-left-open" class="text-sm" />
@@ -236,6 +245,9 @@ const sidebarWidthClass = computed(() =>
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-auto">
       <header class="sticky top-0 z-50 h-14 border-b border-neutral-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 shrink-0 gap-4">
         <div class="flex items-center gap-3 flex-1">
+          <UDropdownMenu :items="mobileMenuItems" class="md:hidden">
+            <UButton icon="i-lucide-menu" color="neutral" variant="ghost" :aria-label="t('nav.menu')" />
+          </UDropdownMenu>
           <h1
             v-if="pageTitle"
             class="text-sm font-semibold text-neutral-900 truncate hidden sm:block"

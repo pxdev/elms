@@ -4,23 +4,23 @@ export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
   const query = getQuery(event)
-  const courseId = Number(query.courseId)
-  if (!courseId) {
-    throw createError({ statusCode: 400, message: 'courseId is required' })
+  const enrollmentId = Number(query.enrollmentId)
+  if (!enrollmentId) {
+    throw createError({ statusCode: 400, message: 'enrollmentId is required' })
   }
 
   // Verify user has an active enrollment for this course
   const enrollment = await prisma.enrollment.findUnique({
-    where: { userId_courseId: { userId: user.id, courseId } },
+    where: { id: enrollmentId },
     include: {
       course: {
-        select: { teacherId: true, totalSessions: true }
+        select: { teacherId: true, totalSessions: true, minimumBookingNoticeHours: true, bookingBufferMinutes: true }
       },
       sessions: true
     }
   })
 
-  if (!enrollment || enrollment.status !== 'ACTIVE') {
+  if (!enrollment || enrollment.userId !== user.id || enrollment.status !== 'ACTIVE') {
     throw createError({ statusCode: 403, message: 'You must be actively enrolled to book sessions.' })
   }
 
@@ -64,8 +64,9 @@ export default defineEventHandler(async (event) => {
     teacher.timeZone,
     existingSessions,
     60,
-    90
-  )
+    90,
+    enrollment.course.bookingBufferMinutes
+  ).filter(slot => slot.startTime.getTime() >= Date.now() + enrollment.course.minimumBookingNoticeHours * 60 * 60 * 1000)
 
   return {
     slots: slots.map(s => ({

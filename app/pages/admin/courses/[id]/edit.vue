@@ -26,11 +26,18 @@ const teacherItems = computed(() =>
 const courseState = reactive({
   name: '',
   description: '',
+  outcomes: '',
+  prerequisites: '',
+  targetAudience: '',
+  refundPolicy: '',
   imageUrl: '',
   teacherId: undefined as number | undefined,
   isActive: false,
   price: undefined as number | undefined,
   totalSessions: undefined as number | undefined,
+  cancellationNoticeHours: 24,
+  minimumBookingNoticeHours: 12,
+  bookingBufferMinutes: 0,
   lsVariantId: ''
 })
 
@@ -293,11 +300,18 @@ watchEffect(() => {
   if (course.value) {
     courseState.name = course.value.name ?? ''
     courseState.description = course.value.description ?? ''
+    courseState.outcomes = course.value.outcomes ?? ''
+    courseState.prerequisites = course.value.prerequisites ?? ''
+    courseState.targetAudience = course.value.targetAudience ?? ''
+    courseState.refundPolicy = course.value.refundPolicy ?? ''
     courseState.imageUrl = course.value.imageUrl ?? ''
     courseState.teacherId = course.value.teacherId ?? undefined
     courseState.isActive = course.value.isActive ?? false
     courseState.price = course.value.price != null ? Number(course.value.price) : undefined
     courseState.totalSessions = course.value.totalSessions ?? undefined
+    courseState.cancellationNoticeHours = course.value.cancellationNoticeHours ?? 24
+    courseState.minimumBookingNoticeHours = course.value.minimumBookingNoticeHours ?? 12
+    courseState.bookingBufferMinutes = course.value.bookingBufferMinutes ?? 0
     courseState.lsVariantId = course.value.lsVariantId ?? ''
   }
 })
@@ -314,11 +328,18 @@ const onSubmitCourse = useThrottleFn(async () => {
       body: {
         name: courseState.name,
         description: courseState.description || undefined,
+        outcomes: courseState.outcomes || undefined,
+        prerequisites: courseState.prerequisites || undefined,
+        targetAudience: courseState.targetAudience || undefined,
+        refundPolicy: courseState.refundPolicy || undefined,
         imageUrl: courseState.imageUrl || undefined,
         teacherId: courseState.teacherId,
         isActive: courseState.isActive,
         price: courseState.price,
         totalSessions: courseState.totalSessions,
+        cancellationNoticeHours: courseState.cancellationNoticeHours,
+        minimumBookingNoticeHours: courseState.minimumBookingNoticeHours,
+        bookingBufferMinutes: courseState.bookingBufferMinutes,
         lsVariantId: courseState.lsVariantId || undefined
       }
     })
@@ -377,6 +398,21 @@ const onSubmitCourse = useThrottleFn(async () => {
               :placeholder="t('fields.name')"
             />
           </UFormField>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <UFormField :label="t('courses.outcomes')" name="outcomes">
+              <UTextarea v-model="courseState.outcomes" :rows="5" class="w-full" :placeholder="t('courses.outcomesHint')" />
+            </UFormField>
+            <UFormField :label="t('courses.targetAudience')" name="targetAudience">
+              <UTextarea v-model="courseState.targetAudience" :rows="5" class="w-full" />
+            </UFormField>
+            <UFormField :label="t('courses.prerequisites')" name="prerequisites">
+              <UTextarea v-model="courseState.prerequisites" :rows="4" class="w-full" />
+            </UFormField>
+            <UFormField :label="t('courses.refundPolicy')" name="refundPolicy">
+              <UTextarea v-model="courseState.refundPolicy" :rows="4" class="w-full" />
+            </UFormField>
+          </div>
 
           <UFormField
             :label="t('fields.description')"
@@ -463,6 +499,15 @@ const onSubmitCourse = useThrottleFn(async () => {
                 class="w-full"
                 :placeholder="t('fields.price')"
               />
+            </UFormField>
+            <UFormField :label="t('courses.cancellationNotice')" name="cancellationNoticeHours">
+              <UInput v-model="courseState.cancellationNoticeHours" type="number" size="xl" class="w-full" />
+            </UFormField>
+            <UFormField :label="t('courses.minimumBookingNotice')" name="minimumBookingNoticeHours">
+              <UInput v-model="courseState.minimumBookingNoticeHours" type="number" size="xl" class="w-full" />
+            </UFormField>
+            <UFormField :label="t('courses.bookingBuffer')" name="bookingBufferMinutes">
+              <UInput v-model="courseState.bookingBufferMinutes" type="number" size="xl" class="w-full" />
             </UFormField>
 
             <UFormField

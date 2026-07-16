@@ -64,6 +64,7 @@ model User {
   enrollments         Enrollment[]
   posts               BlogPost[]
   teacherAvailability TeacherAvailability[]
+  supportRequests     SupportRequest[]
 }
 
 model VerificationToken {
@@ -83,9 +84,16 @@ model Course {
   id            Int              @id @default(autoincrement())
   name          String
   description   String?
+  outcomes      String?
+  prerequisites String?
+  targetAudience String?
+  refundPolicy  String?
   imageUrl      String?
   price         Decimal          @default(0)
   totalSessions Int              @default(4)
+  cancellationNoticeHours Int    @default(24)
+  minimumBookingNoticeHours Int  @default(12)
+  bookingBufferMinutes Int       @default(0)
   lsVariantId   String?
   isActive      Boolean          @default(true)
   teacherId     Int?
@@ -156,12 +164,31 @@ model Enrollment {
   currency      String?
   paidAt        DateTime?
   paymentStatus String?
+  receiptUrl    String?
+  refundedAt    DateTime?
   promoCodeId   Int?
   promoCode     PromoCode?       @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  supportRequests SupportRequest[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
   @@unique([userId, courseId])
+}
+
+model SupportRequest {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollmentId Int?
+  enrollment   Enrollment? @relation(fields: [enrollmentId], references: [id], onDelete: SetNull)
+  subject      String
+  message      String
+  status       String     @default("OPEN")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([userId, status])
+  @@index([enrollmentId])
 }
 
 model Session {
@@ -173,6 +200,10 @@ model Session {
   zoomLink        String?
   status          SessionStatus @default(SCHEDULED)
   notes           String?
+  cancelReason    String?
+  cancelledAt     DateTime?
+  rescheduledAt   DateTime?
+  reminderSentAt  DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }

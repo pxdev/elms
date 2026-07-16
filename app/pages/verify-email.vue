@@ -5,6 +5,10 @@ useSeoMeta({ title: `${t('auth.verifyEmail.titlePending')} · ${t('app.title')}`
 
 const route = useRoute()
 const status = computed(() => String(route.query.status ?? 'pending'))
+const continueTo = computed(() => {
+  const value = String(route.query.redirect ?? '')
+  return value.startsWith('/') && !value.startsWith('//') ? value : '/dashboard'
+})
 
 const { user } = useUserSession()
 const resending = ref(false)
@@ -79,7 +83,7 @@ async function resend() {
           {{ t('auth.verifyEmail.confirmed') }}
         </p>
         <UButton
-          to="/dashboard"
+          :to="continueTo"
           block
         >
           {{ t('auth.verifyEmail.goToDashboard') }}
@@ -138,6 +142,15 @@ async function resend() {
           @click="resend"
         >
           {{ t('auth.verifyEmail.resend') }}
+        </UButton>
+        <UButton
+          v-if="user"
+          :to="continueTo"
+          block
+          variant="ghost"
+          color="neutral"
+        >
+          {{ t('auth.verifyEmail.continue') }}
         </UButton>
         <UAlert
           v-if="resendSuccess"

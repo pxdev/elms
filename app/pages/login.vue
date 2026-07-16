@@ -15,12 +15,17 @@ const state = reactive({
 })
 
 const loading = ref(false)
+const showPassword = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const validate = useZodForm(loginSchema)
 const formatZodErrors = useZodErrorFormatter()
 
 const route = useRoute()
+const redirectTo = computed(() => {
+  const value = String(route.query.redirect ?? '')
+  return value.startsWith('/') && !value.startsWith('//') ? value : '/dashboard'
+})
 if (route.query.error === 'oauth') {
   errorMessage.value = t('errors.oauth')
 }
@@ -34,7 +39,7 @@ const onSubmit = useThrottleFn(async () => {
       body: state
     })
     await refreshSession()
-    await navigateTo('/dashboard')
+    await navigateTo(redirectTo.value)
   } catch (err) {
     const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
     if (e.data?.issues) {
@@ -107,16 +112,29 @@ const onSubmit = useThrottleFn(async () => {
               to="/forgot-password"
               class="text-xs text-primary hover:underline"
             >
-              {{ t('auth.forgotPassword') }}
+              {{ t('auth.forgotPasswordLink') }}
             </NuxtLink>
           </template>
           <UInput
             v-model="state.password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             autocomplete="current-password"
             class="w-full"
             :placeholder="t('auth.password')"
-          size="xl" />
+            size="xl"
+          >
+            <template #trailing>
+              <UButton
+                type="button"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')"
+                @click="showPassword = !showPassword"
+              />
+            </template>
+          </UInput>
         </UFormField>
 
         <UAlert
@@ -141,7 +159,7 @@ const onSubmit = useThrottleFn(async () => {
         <p class="text-sm text-muted text-center">
           {{ t('auth.noAccount') }}
           <NuxtLink
-            to="/register"
+            :to="{ path: '/register', query: route.query.redirect ? { redirect: route.query.redirect } : {} }"
             class="text-primary hover:underline"
           >
             {{ t('nav.signUp') }}

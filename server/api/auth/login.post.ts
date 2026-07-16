@@ -1,9 +1,10 @@
 import { loginSchema } from '~~/shared/schemas'
 
 export default defineEventHandler(async (event) => {
+  enforceRateLimit(event, { max: 10, windowSeconds: 60 })
   const { email, password } = await parseBody(event, loginSchema)
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } })
   if (!user || !user.passwordHash) {
     throw createError({ statusCode: 401, message: 'Invalid email or password.' })
   }
@@ -11,6 +12,9 @@ export default defineEventHandler(async (event) => {
   const valid = await verifyPassword(user.passwordHash, password)
   if (!valid) {
     throw createError({ statusCode: 401, message: 'Invalid email or password.' })
+  }
+  if (!user.isActive) {
+    throw createError({ statusCode: 403, message: 'This account has been disabled.' })
   }
 
   await setUserSession(event, {

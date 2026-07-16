@@ -8,18 +8,21 @@ definePageMeta({ guest: true })
 useSeoMeta({ title: `${t('auth.register.title')} · ${t('app.title')}` })
 
 const { fetch: refreshSession } = useUserSession()
+const route = useRoute()
+const redirectTo = computed(() => {
+  const value = String(route.query.redirect ?? '')
+  return value.startsWith('/') && !value.startsWith('//') ? value : '/dashboard'
+})
 
 const state = reactive({
   name: '',
   email: '',
   password: '',
-  timeZone: '',
-  phone: '',
-  country: '',
-  age: undefined as number | undefined
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
 })
 
 const loading = ref(false)
+const showPassword = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const validate = useZodForm(registerSchema)
@@ -34,7 +37,7 @@ const onSubmit = useThrottleFn(async () => {
       body: state
     })
     await refreshSession()
-    await navigateTo('/verify-email')
+    await navigateTo({ path: '/verify-email', query: { redirect: redirectTo.value } })
   } catch (err) {
     const e = err as { data?: { message?: string; issues?: unknown[] }; message?: string }
     if (e.data?.issues) {
@@ -117,59 +120,16 @@ const onSubmit = useThrottleFn(async () => {
         >
           <UInput
             v-model="state.password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.password')"
-          size="xl" />
-        </UFormField>
-
-        <USeparator class="my-2" />
-
-        <UFormField
-          :label="t('auth.timeZone')"
-          name="timeZone"
-        >
-          <UInput
-            v-model="state.timeZone"
-            class="w-full"
-            :placeholder="t('auth.timeZone')"
-          size="xl" />
-        </UFormField>
-
-        <UFormField
-          :label="t('auth.phone')"
-          name="phone"
-        >
-          <UInput
-            v-model="state.phone"
-            type="tel"
-            class="w-full"
-            :placeholder="t('auth.phone')"
-          size="xl" />
-        </UFormField>
-
-        <UFormField
-          :label="t('auth.country')"
-          name="country"
-        >
-          <UInput
-            v-model="state.country"
-            class="w-full"
-            :placeholder="t('auth.country')"
-          size="xl" />
-        </UFormField>
-
-        <UFormField
-          :label="t('auth.age')"
-          name="age"
-        >
-          <UInput
-            v-model="state.age"
-            type="number"
-            class="w-full"
-            :placeholder="t('auth.age')"
-          size="xl" />
+            size="xl"
+          >
+            <template #trailing>
+              <UButton type="button" color="neutral" variant="ghost" size="xs" :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')" @click="showPassword = !showPassword" />
+            </template>
+          </UInput>
         </UFormField>
 
         <UAlert
@@ -194,7 +154,7 @@ const onSubmit = useThrottleFn(async () => {
         <p class="text-sm text-muted text-center">
           {{ t('auth.hasAccount') }}
           <NuxtLink
-            to="/login"
+            :to="{ path: '/login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }"
             class="text-primary hover:underline"
           >
             {{ t('nav.signIn') }}

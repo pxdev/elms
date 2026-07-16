@@ -17,6 +17,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 503, message: 'This course is not available for purchase yet.' })
   }
 
+  const existingEnrollment = await prisma.enrollment.findUnique({
+    where: { userId_courseId: { userId: user.id, courseId: course.id } }
+  })
+  if (existingEnrollment?.status === 'ACTIVE' || existingEnrollment?.status === 'COMPLETED') {
+    throw createError({ statusCode: 409, message: 'You are already enrolled in this course.' })
+  }
+
   // Validate optional promo code
   let promoCode: string | undefined
   if (body.promoCode) {

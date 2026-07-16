@@ -1,0 +1,8 @@
+ALTER TABLE "Course" ADD COLUMN "cancellationNoticeHours" INTEGER NOT NULL DEFAULT 24;
+ALTER TABLE "Course" ADD COLUMN "minimumBookingNoticeHours" INTEGER NOT NULL DEFAULT 12;
+ALTER TABLE "Course" ADD COLUMN "bookingBufferMinutes" INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE "Session" ADD COLUMN "cancelReason" TEXT;
+ALTER TABLE "Session" ADD COLUMN "cancelledAt" DATETIME;
+ALTER TABLE "Session" ADD COLUMN "rescheduledAt" DATETIME;
+ALTER TABLE "Session" ADD COLUMN "reminderSentAt" DATETIME;

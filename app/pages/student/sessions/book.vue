@@ -7,29 +7,37 @@ definePageMeta({ layout: 'dashboard', authorize: true })
 useSeoMeta({ title: `${t('sessions.bookSession')} · ${t('app.title')}` })
 
 const enrollmentId = computed(() => Number(route.query.enrollment))
+const rescheduleSessionId = computed(() => Number(route.query.reschedule) || null)
 
 const { data: slotsData, status: slotsStatus } = await useFetch('/api/student/slots', {
-  query: computed(() => ({ courseId: enrollmentId.value })),
+  query: computed(() => ({ enrollmentId: enrollmentId.value })),
   watch: [enrollmentId]
 })
 
 const selectedSlot = ref<string | null>(null)
 const booking = ref(false)
+const bookingError = ref<string | null>(null)
 
 async function bookSession() {
   if (!selectedSlot.value || !enrollmentId.value) return
+  bookingError.value = null
   booking.value = true
   try {
-    await $fetch('/api/student/sessions', {
-      method: 'POST',
-      body: {
-        enrollmentId: enrollmentId.value,
-        scheduledAt: selectedSlot.value
-      }
-    })
+    if (rescheduleSessionId.value) {
+      await $fetch(`/api/student/sessions/${rescheduleSessionId.value}`, {
+        method: 'PATCH',
+        body: { action: 'reschedule', scheduledAt: selectedSlot.value }
+      })
+    } else {
+      await $fetch('/api/student/sessions', {
+        method: 'POST',
+        body: { enrollmentId: enrollmentId.value, scheduledAt: selectedSlot.value }
+      })
+    }
     await navigateTo('/student/sessions')
-  } catch (err: any) {
-    alert(err.data?.message || err.message || 'Booking failed')
+  } catch (err: unknown) {
+    const e = err as { data?: { message?: string }, message?: string }
+    bookingError.value = e.data?.message ?? e.message ?? t('errors.generic')
   } finally {
     booking.value = false
   }
@@ -60,6 +68,22 @@ const slotsByDate = computed(() => {
 
 <template>
   <UContainer class="py-12 max-w-2xl">
+    <div class="mb-6 space-y-2">
+      <UButton
+        to="/enrollments"
+        variant="ghost"
+        color="neutral"
+        icon="i-lucide-arrow-left"
+      >
+        {{ t('sessions.backToEnrollments') }}
+      </UButton>
+      <h1 class="text-2xl font-bold">
+        {{ rescheduleSessionId ? t('sessions.reschedule') : t('sessions.bookSession') }}
+      </h1>
+      <p class="text-sm text-muted">
+        {{ t('sessions.timeZoneNote', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }) }}
+      </p>
+    </div>
     <UCard>
 
       <div v-if="slotsStatus === 'pending'" class="py-8 text-center text-muted-foreground">
@@ -81,6 +105,13 @@ const slotsByDate = computed(() => {
       </div>
 
       <div v-else class="space-y-6">
+        <UAlert
+          v-if="bookingError"
+          color="error"
+          variant="soft"
+          icon="i-lucide-alert-circle"
+          :title="bookingError"
+        />
         <div
           v-for="(daySlots, dateKey) in slotsByDate"
           :key="dateKey"
@@ -111,7 +142,7 @@ const slotsByDate = computed(() => {
             :disabled="!selectedSlot"
             @click="bookSession"
           >
-            {{ t('common.save') }}
+            {{ rescheduleSessionId ? t('sessions.confirmReschedule') : t('sessions.confirmBooking') }}
           </UButton>
         </div>
       </div>

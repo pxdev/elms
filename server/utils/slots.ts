@@ -17,7 +17,8 @@ export function generateAvailableSlots(
   teacherTimeZone: string,
   existingSessions: { scheduledAt: Date; durationMinutes: number }[],
   durationMinutes = 60,
-  daysAhead = 90
+  daysAhead = 90,
+  bufferMinutes = 0
 ): TimeSlot[] {
   const now = new Date()
   const slots: TimeSlot[] = []
@@ -53,8 +54,9 @@ export function generateAvailableSlots(
         // Check if this slot overlaps with an existing session
         const overlaps = existingSessions.some(session => {
           const sessionStart = new Date(session.scheduledAt)
-          const sessionEnd = new Date(sessionStart.getTime() + session.durationMinutes * 60000)
-          return slotStart < sessionEnd && slotEnd > sessionStart
+          const sessionEnd = new Date(sessionStart.getTime() + (session.durationMinutes + bufferMinutes) * 60000)
+          const bufferedSlotEnd = new Date(slotEnd.getTime() + bufferMinutes * 60000)
+          return slotStart < sessionEnd && bufferedSlotEnd > sessionStart
         })
 
         if (!overlaps && isAfter(slotStart, now)) {

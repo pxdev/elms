@@ -9,7 +9,7 @@ const { data, status } = await useFetch(() => `/api/courses/${courseId.value}`)
 const course = computed(() => data.value?.course)
 
 const enrolling = ref(false)
-const enrolled = ref(false)
+const enrolled = computed(() => ['ACTIVE', 'COMPLETED'].includes(data.value?.enrollment?.status ?? ''))
 const enrollError = ref<string | null>(null)
 
 // Promo code state
@@ -17,6 +17,12 @@ const promoCode = ref('')
 const validatingPromo = ref(false)
 const promoError = ref<string | null>(null)
 const validPromo = ref<{ valid: true; code: string; discountPercent: number; courseName: string | null } | null>(null)
+
+const formatPrice = (value: number | string) => new Intl.NumberFormat(undefined, {
+  style: 'currency',
+  currency: 'USD'
+}).format(Number(value))
+const lines = (value?: string | null) => (value ?? '').split('\n').map(item => item.trim()).filter(Boolean)
 
 async function validatePromo() {
   promoError.value = null
@@ -109,6 +115,11 @@ useSeoMeta({
     </UButton>
 
     <div v-if="course">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold tracking-tight">
+          {{ course.name }}
+        </h1>
+      </div>
       <div
         v-if="course.imageUrl"
         class="aspect-video w-full rounded-lg overflow-hidden mb-6"
@@ -136,12 +147,44 @@ useSeoMeta({
         </div>
       </div>
 
+      <div
+        v-if="course.outcomes || course.prerequisites || course.targetAudience"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+      >
+        <UCard v-if="course.outcomes">
+          <h2 class="font-semibold mb-3">{{ t('courses.outcomes') }}</h2>
+          <ul class="space-y-2 text-sm">
+            <li v-for="item in lines(course.outcomes)" :key="item" class="flex gap-2">
+              <UIcon name="i-lucide-circle-check" class="text-success mt-0.5 shrink-0" />
+              <span>{{ item }}</span>
+            </li>
+          </ul>
+        </UCard>
+        <UCard v-if="course.targetAudience">
+          <h2 class="font-semibold mb-3">{{ t('courses.targetAudience') }}</h2>
+          <p class="text-sm text-muted">{{ course.targetAudience }}</p>
+        </UCard>
+        <UCard v-if="course.prerequisites">
+          <h2 class="font-semibold mb-3">{{ t('courses.prerequisites') }}</h2>
+          <p class="text-sm text-muted">{{ course.prerequisites }}</p>
+        </UCard>
+      </div>
+
       <UAlert
         v-if="enrolled"
         color="success"
         variant="soft"
         icon="i-lucide-check-circle"
         :title="t('courses.enrolled')"
+        class="mb-4"
+      />
+
+      <UAlert
+        v-if="data?.enrollment?.status === 'PENDING'"
+        color="warning"
+        variant="soft"
+        icon="i-lucide-clock-3"
+        :title="t('courses.paymentPending')"
         class="mb-4"
       />
 
@@ -154,7 +197,7 @@ useSeoMeta({
         class="mb-4"
       />
 
-      <UCard class="mb-6">
+      <UCard v-if="!enrolled" class="mb-6">
         <div class="space-y-4">
           <div class="flex items-center justify-between">
             <div>
@@ -167,13 +210,13 @@ useSeoMeta({
             </div>
             <div class="text-right">
               <p v-if="validPromo" class="text-2xl font-bold text-primary">
-                ${{ discountedPrice(Number(course.price), validPromo.discountPercent) }}
+                {{ formatPrice(discountedPrice(Number(course.price), validPromo.discountPercent)) }}
               </p>
               <p v-else class="text-2xl font-bold text-primary">
-                ${{ course.price }}
+                {{ formatPrice(course.price) }}
               </p>
               <p v-if="validPromo" class="text-sm text-muted line-through">
-                ${{ course.price }}
+                {{ formatPrice(course.price) }}
               </p>
             </div>
           </div>
@@ -223,9 +266,13 @@ useSeoMeta({
           >
             {{ enrolled ? t('courses.enrolled') : t('courses.payAndEnroll') }}
           </UButton>
+          <div v-if="course.refundPolicy" class="flex gap-2 text-sm text-muted">
+            <UIcon name="i-lucide-shield-check" class="text-success mt-0.5 shrink-0" />
+            <span>{{ course.refundPolicy }}</span>
+          </div>
           <UButton
             v-else
-            to="/login"
+            :to="{ path: '/login', query: { redirect: route.fullPath } }"
             block
             color="neutral"
             variant="subtle"
@@ -247,7 +294,9 @@ useSeoMeta({
             :key="lesson.id"
           >
             <button
-              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left"
+              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-start"
+              :aria-expanded="expandedLessons.has(lesson.id)"
+              :aria-controls="`lesson-${lesson.id}`"
               @click="toggleLesson(lesson.id)"
             >
               <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
@@ -260,6 +309,7 @@ useSeoMeta({
               />
             </button>
             <div
+              :id="`lesson-${lesson.id}`"
               v-show="expandedLessons.has(lesson.id)"
               class="px-4 pb-4 space-y-2"
             >

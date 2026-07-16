@@ -12,10 +12,17 @@ useSeoMeta({ title: `${t('admin.courses.create')} · ${t('app.title')}` })
 const state = reactive({
   name: '',
   description: '',
+  outcomes: '',
+  prerequisites: '',
+  targetAudience: '',
+  refundPolicy: '',
   imageUrl: '',
   teacherId: undefined as number | undefined,
   price: undefined as number | undefined,
   totalSessions: undefined as number | undefined,
+  cancellationNoticeHours: 24,
+  minimumBookingNoticeHours: 12,
+  bookingBufferMinutes: 0,
   lsVariantId: ''
 })
 
@@ -43,10 +50,17 @@ const onSubmit = useThrottleFn(async () => {
       body: {
         name: state.name,
         description: state.description || undefined,
+        outcomes: state.outcomes || undefined,
+        prerequisites: state.prerequisites || undefined,
+        targetAudience: state.targetAudience || undefined,
+        refundPolicy: state.refundPolicy || undefined,
         imageUrl: state.imageUrl || undefined,
         teacherId: state.teacherId,
         price: state.price,
         totalSessions: state.totalSessions,
+        cancellationNoticeHours: state.cancellationNoticeHours,
+        minimumBookingNoticeHours: state.minimumBookingNoticeHours,
+        bookingBufferMinutes: state.bookingBufferMinutes,
         lsVariantId: state.lsVariantId || undefined
       }
     })
@@ -87,6 +101,21 @@ const onSubmit = useThrottleFn(async () => {
             :placeholder="t('fields.name')"
           />
         </UFormField>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <UFormField :label="t('courses.outcomes')" name="outcomes">
+            <UTextarea v-model="state.outcomes" :rows="5" class="w-full" :placeholder="t('courses.outcomesHint')" />
+          </UFormField>
+          <UFormField :label="t('courses.targetAudience')" name="targetAudience">
+            <UTextarea v-model="state.targetAudience" :rows="5" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('courses.prerequisites')" name="prerequisites">
+            <UTextarea v-model="state.prerequisites" :rows="4" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('courses.refundPolicy')" name="refundPolicy">
+            <UTextarea v-model="state.refundPolicy" :rows="4" class="w-full" />
+          </UFormField>
+        </div>
 
         <UFormField
           :label="t('fields.description')"
@@ -198,6 +227,15 @@ const onSubmit = useThrottleFn(async () => {
               class="w-full"
               :placeholder="t('fields.lsVariantId')"
             />
+          </UFormField>
+          <UFormField :label="t('courses.cancellationNotice')" name="cancellationNoticeHours">
+            <UInput v-model="state.cancellationNoticeHours" type="number" size="xl" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('courses.minimumBookingNotice')" name="minimumBookingNoticeHours">
+            <UInput v-model="state.minimumBookingNoticeHours" type="number" size="xl" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('courses.bookingBuffer')" name="bookingBufferMinutes">
+            <UInput v-model="state.bookingBufferMinutes" type="number" size="xl" class="w-full" />
           </UFormField>
         </div>
 

@@ -15,6 +15,9 @@
     "profile": "الملف الشخصي",
     "blog": "المدونة",
     "search": "بحث..."
+    ,"menu": "القائمة الرئيسية"
+    ,"collapseSidebar": "طي الشريط الجانبي"
+    ,"expandSidebar": "توسيع الشريط الجانبي"
   },
   "auth": {
     "email": "البريد الإلكتروني",
@@ -26,7 +29,9 @@
     "age": "العمر",
     "confirmPassword": "تأكيد كلمة المرور",
     "newPassword": "كلمة المرور الجديدة",
-    "forgotPassword": "نسيت كلمة المرور؟",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
+    "forgotPasswordLink": "نسيت كلمة المرور؟",
     "rememberedPassword": "تذكرت كلمة المرور؟",
     "noAccount": "ليس لديك حساب؟",
     "hasAccount": "لديك حساب بالفعل؟",
@@ -52,7 +57,8 @@
       "invalid": "رابط التحقق لا يعمل. قد يكون منتهي الصلاحية أو مستخدماً بالفعل.",
       "resend": "إعادة إرسال الرسالة",
       "resendSent": "إذا كان العنوان مسجلاً، فقد أُرسل رابط جديد.",
-      "goToDashboard": "الذهاب إلى لوحة التحكم"
+      "goToDashboard": "الذهاب إلى لوحة التحكم",
+      "continue": "متابعة"
     },
     "forgotPassword": {
       "title": "إعادة تعيين كلمة المرور",
@@ -66,7 +72,9 @@
       "submit": "تحديث كلمة المرور",
       "successTitle": "تم تحديث كلمة المرور",
       "successDescription": "يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
-      "continue": "المتابعة إلى تسجيل الدخول"
+      "continue": "المتابعة إلى تسجيل الدخول",
+      "invalidTitle": "رابط إعادة التعيين غير صالح",
+      "invalidDescription": "اطلب رابطاً جديداً لإعادة تعيين كلمة المرور ثم حاول مرة أخرى."
     }
   },
   "fields": {
@@ -168,8 +176,17 @@
     "payAndEnroll": "ادفع وسجل",
     "enrolled": "مسجل",
     "paymentSuccess": "تم الدفع بنجاح! تسجيلك نشط الآن.",
+    "paymentPending": "لا يزال تأكيد دفعتك جارياً. تحقق من تسجيلاتي بعد قليل.",
     "signInToEnroll": "سجل الدخول للتسجيل",
     "notFound": "الدورة غير موجودة",
+    "outcomes": "ما الذي ستحققه",
+    "outcomesHint": "نتيجة واحدة في كل سطر",
+    "targetAudience": "لمن هذه الدورة",
+    "prerequisites": "المتطلبات السابقة",
+    "refundPolicy": "سياسة الاسترداد والإلغاء",
+    "cancellationNotice": "مهلة الإلغاء (بالساعات)",
+    "minimumBookingNotice": "الحد الأدنى لمهلة الحجز (بالساعات)",
+    "bookingBuffer": "الفاصل بين الجلسات (بالدقائق)",
     "empty": {
       "title": "لا توجد دورات متاحة",
       "description": "تحقق لاحقاً من الدورات الجديدة."
@@ -178,6 +195,7 @@
   "enrollments": {
     "title": "تسجيلاتي",
     "enrolledAt": "تم التسجيل",
+    "paidAt": "تم الدفع",
     "status": {
       "PENDING": "معلق",
       "ACTIVE": "نشط",
@@ -191,6 +209,8 @@
       "description": "تصفح الدورات وسجل في إحداها للبدء."
     },
     "paymentSuccessTitle": "تم الدفع بنجاح"
+    ,"paymentProcessing": "تم استلام الدفعة — جارٍ تأكيد تسجيلك"
+    ,"paymentProcessingDescription": "تتحدث هذه الصفحة تلقائياً. قد يستغرق تفعيل الوصول إلى الدورة بضع ثوانٍ."
   },
   "days": {
     "sunday": "الأحد",
@@ -221,6 +241,17 @@
     "noAvailability": "المعلم لم يحدد أوقات توفره",
     "noSlots": "لا توجد أوقات متاحة",
     "progress": "تقدم الجلسات"
+    ,"backToEnrollments": "العودة إلى التسجيلات"
+    ,"timeZoneNote": "تُعرض الأوقات حسب منطقتك الزمنية المحلية: {timeZone}"
+    ,"confirmBooking": "تأكيد الحجز"
+    ,"noSessionsDescription": "اختر تسجيلاً نشطاً لحجز جلستك الأولى."
+    ,"chooseEnrollment": "اختيار تسجيل"
+    ,"reschedule": "إعادة جدولة الجلسة"
+    ,"confirmReschedule": "تأكيد الوقت الجديد"
+    ,"addToCalendar": "إضافة إلى التقويم"
+    ,"addToGoogleCalendar": "إضافة إلى تقويم Google"
+    ,"addToOutlookCalendar": "إضافة إلى تقويم Outlook"
+    ,"cancelConfirm": "هل تريد إلغاء هذه الجلسة؟ سيصبح رصيد الجلسة متاحاً مرة أخرى."
   },
   "lessons": {
     "title": "الدروس",
@@ -288,11 +319,31 @@
     }
   },
   "payments": {
+    "receipt": "الإيصال",
     "status": {
       "PAID": "مدفوع",
       "REFUNDED": "مسترد",
       "PENDING": "معلق"
     }
+  },
+  "support": {
+    "title": "الدعم",
+    "description": "أرسل سؤالاً عن الدفع أو الوصول إلى الدورة أو الاسترداد أو الجلسات.",
+    "relatedEnrollment": "التسجيل المرتبط",
+    "general": "سؤال عام",
+    "subject": "الموضوع",
+    "message": "الرسالة",
+    "submit": "إرسال الطلب",
+    "sent": "تم استلام طلب الدعم الخاص بك.",
+    "history": "طلباتك",
+    "getHelp": "الحصول على مساعدة"
+    ,"requestRefund": "طلب استرداد"
+    ,"refundSubject": "طلب استرداد"
+    ,"adminTitle": "طلبات الدعم"
+    ,"adminDescription": "حل أسئلة الطلاب مع سياق التسجيل والدفع."
+    ,"inProgress": "قيد المعالجة"
+    ,"resolve": "حل الطلب"
+    ,"noRequests": "لا توجد طلبات دعم"
   },
   "errors": {
     "required": "{field} مطلوب.",

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     where: { userId: user.id },
     include: {
       course: {
-        select: { id: true, name: true, description: true, imageUrl: true, teacher: { select: { name: true } } }
+        select: { id: true, name: true, description: true, imageUrl: true, totalSessions: true, teacher: { select: { name: true } } }
       },
       sessions: true
     },

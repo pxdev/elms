@@ -22,11 +22,18 @@ export default defineEventHandler(async (event) => {
     data: {
       name: body.name?.trim(),
       description: body.description?.trim(),
+      outcomes: body.outcomes?.trim(),
+      prerequisites: body.prerequisites?.trim(),
+      targetAudience: body.targetAudience?.trim(),
+      refundPolicy: body.refundPolicy?.trim(),
       imageUrl: body.imageUrl?.trim(),
       teacherId: body.teacherId,
       isActive: body.isActive,
       price: body.price,
       totalSessions: body.totalSessions,
+      cancellationNoticeHours: body.cancellationNoticeHours,
+      minimumBookingNoticeHours: body.minimumBookingNoticeHours,
+      bookingBufferMinutes: body.bookingBufferMinutes,
       lsVariantId: body.lsVariantId?.trim()
     }
   })

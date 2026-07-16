@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
   // Must be authenticated
   if (!loggedIn.value) {
-    return navigateTo('/login')
+    return navigateTo({ path: '/login', query: { redirect: to.fullPath } })
   }
 
   // Any authenticated user is fine

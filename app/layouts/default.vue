@@ -40,13 +40,13 @@ async function logout() {
         <USeparator orientation="vertical" class="h-4 mx-1" />
 
         <template v-if="loggedIn">
-          <UButton to="/dashboard" variant="ghost" color="neutral">
+          <UButton to="/dashboard" variant="ghost" color="neutral" class="hidden md:inline-flex">
             {{ t('nav.dashboard') }}
           </UButton>
-          <UButton to="/courses" variant="ghost" color="neutral">
+          <UButton to="/courses" variant="ghost" color="neutral" class="hidden md:inline-flex">
             {{ t('nav.courses') }}
           </UButton>
-          <UButton to="/enrollments" variant="ghost" color="neutral">
+          <UButton to="/enrollments" variant="ghost" color="neutral" class="hidden md:inline-flex">
             {{ t('nav.enrollments') }}
           </UButton>
           <UButton
@@ -54,6 +54,7 @@ async function logout() {
             to="/admin"
             variant="ghost"
             color="neutral"
+            class="hidden md:inline-flex"
           >
             {{ t('nav.admin') }}
           </UButton>
@@ -69,21 +70,36 @@ async function logout() {
               color="neutral"
               variant="ghost"
               :label="user?.name || user?.email"
+              class="max-w-36"
+              :ui="{ label: 'truncate' }"
             />
           </UDropdownMenu>
         </template>
 
         <template v-else>
-          <UButton to="/courses" variant="ghost" color="neutral">
+          <UButton to="/courses" variant="ghost" color="neutral" class="hidden md:inline-flex">
             {{ t('nav.courses') }}
           </UButton>
-          <UButton to="/login" variant="ghost" color="neutral">
+          <UButton to="/login" variant="ghost" color="neutral" class="hidden md:inline-flex">
             {{ t('nav.signIn') }}
           </UButton>
-          <UButton to="/register" color="primary">
+          <UButton to="/register" color="primary" class="hidden md:inline-flex">
             {{ t('nav.signUp') }}
           </UButton>
         </template>
+      </template>
+      <template #body>
+        <nav class="flex flex-col gap-2 p-4" :aria-label="t('nav.menu')">
+          <UButton to="/courses" variant="ghost" color="neutral" block>{{ t('nav.courses') }}</UButton>
+          <template v-if="loggedIn">
+            <UButton to="/dashboard" variant="ghost" color="neutral" block>{{ t('nav.dashboard') }}</UButton>
+            <UButton to="/enrollments" variant="ghost" color="neutral" block>{{ t('nav.enrollments') }}</UButton>
+          </template>
+          <template v-else>
+            <UButton to="/login" variant="ghost" color="neutral" block>{{ t('nav.signIn') }}</UButton>
+            <UButton to="/register" block>{{ t('nav.signUp') }}</UButton>
+          </template>
+        </nav>
       </template>
     </UHeader>
 

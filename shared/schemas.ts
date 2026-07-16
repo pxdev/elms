@@ -31,21 +31,35 @@ export const resendVerificationSchema = z.object({
 export const createCourseSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
+  outcomes: z.string().optional(),
+  prerequisites: z.string().optional(),
+  targetAudience: z.string().optional(),
+  refundPolicy: z.string().optional(),
   imageUrl: z.union([z.string().url(), z.literal('')]).optional(),
   teacherId: z.coerce.number().int().positive().optional(),
   price: z.coerce.number().min(0).optional(),
   totalSessions: z.coerce.number().int().min(1).optional(),
+  cancellationNoticeHours: z.coerce.number().int().min(0).max(168).optional(),
+  minimumBookingNoticeHours: z.coerce.number().int().min(0).max(168).optional(),
+  bookingBufferMinutes: z.coerce.number().int().min(0).max(120).optional(),
   lsVariantId: z.string().optional()
 })
 
 export const updateCourseSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
+  outcomes: z.string().optional(),
+  prerequisites: z.string().optional(),
+  targetAudience: z.string().optional(),
+  refundPolicy: z.string().optional(),
   imageUrl: z.union([z.string().url(), z.literal('')]).optional(),
   teacherId: z.coerce.number().int().positive().nullish(),
   isActive: z.boolean().optional(),
   price: z.coerce.number().min(0).optional(),
   totalSessions: z.coerce.number().int().min(1).optional(),
+  cancellationNoticeHours: z.coerce.number().int().min(0).max(168).optional(),
+  minimumBookingNoticeHours: z.coerce.number().int().min(0).max(168).optional(),
+  bookingBufferMinutes: z.coerce.number().int().min(0).max(120).optional(),
   lsVariantId: z.string().nullish()
 })
 
@@ -152,6 +166,17 @@ export const updateSessionSchema = z.object({
   status: z.enum(['SCHEDULED', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
   zoomLink: z.string().url().optional(),
   notes: z.string().optional()
+})
+
+export const studentUpdateSessionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('cancel'), reason: z.string().max(500).optional() }),
+  z.object({ action: z.literal('reschedule'), scheduledAt: z.string().datetime() })
+])
+
+export const supportRequestSchema = z.object({
+  enrollmentId: z.coerce.number().int().positive().optional(),
+  subject: z.string().min(3).max(120),
+  message: z.string().min(10).max(4000)
 })
 
 export const courseMaterialSchema = z.object({

@@ -1,6 +1,7 @@
 import { registerSchema } from '~~/shared/schemas'
 
 export default defineEventHandler(async (event) => {
+  enforceRateLimit(event, { max: 5, windowSeconds: 60 })
   const {
     email,
     password,
@@ -11,7 +12,8 @@ export default defineEventHandler(async (event) => {
     age
   } = await parseBody(event, registerSchema)
 
-  const existing = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = email.trim().toLowerCase()
+  const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } })
   if (existing) {
     throw createError({ statusCode: 409, message: 'A user with this email already exists.' })
   }
@@ -20,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.user.create({
     data: {
-      email,
+      email: normalizedEmail,
       name: name ?? null,
       passwordHash,
       timeZone: timeZone ?? null,

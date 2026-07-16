@@ -18,6 +18,7 @@ const state = reactive({
 const loading = ref(false)
 const success = ref(false)
 const errorMessage = ref<string | null>(null)
+const showPassword = ref(false)
 
 const resetPasswordClientSchema = z.object({
   password: z.string().min(8),
@@ -93,6 +94,15 @@ const onSubmit = useThrottleFn(async () => {
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UAlert
+          v-if="!token"
+          color="error"
+          variant="soft"
+          icon="i-lucide-link-2-off"
+          :title="t('auth.resetPassword.invalidTitle')"
+          :description="t('auth.resetPassword.invalidDescription')"
+        />
+
         <UFormField
           :label="t('auth.newPassword')"
           name="password"
@@ -101,11 +111,16 @@ const onSubmit = useThrottleFn(async () => {
         >
           <UInput
             v-model="state.password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.newPassword')"
-          size="xl" />
+            size="xl"
+          >
+            <template #trailing>
+              <UButton type="button" color="neutral" variant="ghost" size="xs" :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')" @click="showPassword = !showPassword" />
+            </template>
+          </UInput>
         </UFormField>
 
         <UFormField
@@ -115,7 +130,7 @@ const onSubmit = useThrottleFn(async () => {
         >
           <UInput
             v-model="state.confirm"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             autocomplete="new-password"
             class="w-full"
             :placeholder="t('auth.confirmPassword')"

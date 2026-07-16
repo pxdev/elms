@@ -25,5 +25,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Course not found.' })
   }
 
-  return { course }
+  const session = await getUserSession(event)
+  const enrollment = session.user
+    ? await prisma.enrollment.findUnique({
+        where: { userId_courseId: { userId: session.user.id, courseId: course.id } },
+        select: { id: true, status: true, paymentStatus: true }
+      })
+    : null
+
+  return { course, enrollment }
 })

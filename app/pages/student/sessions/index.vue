@@ -8,10 +8,45 @@ definePageMeta({ layout: 'dashboard', authorize: true })
 useSeoMeta({ title: `${t('sessions.title')} · ${t('app.title')}` })
 
 const { data, refresh, status } = await useFetch('/api/student/sessions')
+const changingSession = ref<number | null>(null)
+
+async function cancelSession(session: { id: number }) {
+  if (!confirm(t('sessions.cancelConfirm'))) return
+  changingSession.value = session.id
+  try {
+    await $fetch(`/api/student/sessions/${session.id}`, {
+      method: 'PATCH',
+      body: { action: 'cancel' }
+    })
+    await refresh()
+  } finally {
+    changingSession.value = null
+  }
+}
 
 function formatDateTime(dateStr: string) {
   const d = parseISO(dateStr)
   return format(d, 'MMM d, yyyy · h:mm a')
+}
+
+function calendarDetails(session: any) {
+  const start = new Date(session.scheduledAt)
+  const end = new Date(start.getTime() + session.durationMinutes * 60_000)
+  const stamp = (date: Date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+  const title = `${session.enrollment.course.name} · ${session.enrollment.course.teacher?.name ?? ''}`
+  return { start: stamp(start), end: stamp(end), title }
+}
+
+function googleCalendarUrl(session: any) {
+  const item = calendarDetails(session)
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(item.title)}&dates=${item.start}/${item.end}`
+}
+
+function outlookCalendarUrl(session: any) {
+  const start = new Date(session.scheduledAt)
+  const end = new Date(start.getTime() + session.durationMinutes * 60_000)
+  const title = calendarDetails(session).title
+  return `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${encodeURIComponent(title)}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}`
 }
 
 const upcomingSessions = computed(() => {
@@ -32,6 +67,9 @@ const pastSessions = computed(() => {
 <template>
   <UContainer class="py-12 space-y-6">
     <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">
+        {{ t('sessions.title') }}
+      </h1>
       <UButton
         size="xs"
         color="neutral"
@@ -79,6 +117,56 @@ const pastSessions = computed(() => {
                 <UIcon name="i-lucide-video" />
                 Zoom
               </a>
+              <div v-if="session.status === 'SCHEDULED'" class="flex flex-wrap justify-end gap-1">
+                <UButton
+                  :to="`/student/sessions/book?enrollment=${session.enrollmentId}&reschedule=${session.id}`"
+                  size="xs"
+                  color="neutral"
+                  variant="soft"
+                  icon="i-lucide-calendar-sync"
+                >
+                  {{ t('sessions.reschedule') }}
+                </UButton>
+                <UButton
+                  :to="googleCalendarUrl(session)"
+                  external
+                  target="_blank"
+                  size="xs"
+                  color="neutral"
+                  variant="ghost"
+                  icon="i-simple-icons-googlecalendar"
+                  :aria-label="t('sessions.addToGoogleCalendar')"
+                />
+                <UButton
+                  :to="outlookCalendarUrl(session)"
+                  external
+                  target="_blank"
+                  size="xs"
+                  color="neutral"
+                  variant="ghost"
+                  icon="i-lucide-calendar-days"
+                  :aria-label="t('sessions.addToOutlookCalendar')"
+                />
+                <UButton
+                  :to="`/api/student/sessions/${session.id}/calendar`"
+                  external
+                  size="xs"
+                  color="neutral"
+                  variant="ghost"
+                  icon="i-lucide-calendar-plus"
+                >
+                  {{ t('sessions.addToCalendar') }}
+                </UButton>
+                <UButton
+                  size="xs"
+                  color="error"
+                  variant="ghost"
+                  :loading="changingSession === session.id"
+                  @click="cancelSession(session)"
+                >
+                  {{ t('common.cancel') }}
+                </UButton>
+              </div>
             </div>
           </div>
         </UCard>
@@ -90,7 +178,16 @@ const pastSessions = computed(() => {
         variant="soft"
         icon="i-lucide-calendar"
         :title="t('sessions.noSessions')"
+        :description="t('sessions.noSessionsDescription')"
       />
+      <UButton
+        v-if="!upcomingSessions.length"
+        to="/enrollments"
+        variant="soft"
+        icon="i-lucide-calendar-plus"
+      >
+        {{ t('sessions.chooseEnrollment') }}
+      </UButton>
     </div>
 
     <!-- Past Sessions -->

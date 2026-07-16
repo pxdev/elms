@@ -9,6 +9,15 @@ useSeoMeta({ title: `${t('enrollments.title')} · ${t('app.title')}` })
 const { data, refresh, status } = await useFetch('/api/enrollments/me')
 const enrollments = computed(() => data.value?.enrollments ?? [])
 
+onMounted(async () => {
+  if (route.query.success !== '1') return
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await refresh()
+    if (enrollments.value.some(enrollment => enrollment.status === 'ACTIVE')) break
+    await new Promise(resolve => setTimeout(resolve, 2000))
+  }
+})
+
 const statusColor = (status: string) => {
   switch (status) {
     case 'ACTIVE': return 'success'
@@ -47,11 +56,15 @@ function sessionProgress(enrollment: any) {
       color="success"
       variant="soft"
       icon="i-lucide-check-circle"
-      :title="t('enrollments.paymentSuccess')"
+      :title="t('enrollments.paymentProcessing')"
+      :description="t('enrollments.paymentProcessingDescription')"
       class="mb-4"
     />
 
     <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">
+        {{ t('enrollments.title') }}
+      </h1>
       <UButton
         size="xs"
         color="neutral"
@@ -134,7 +147,7 @@ function sessionProgress(enrollment: any) {
         </div>
 
         <template #footer>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <UButton
               v-if="enrollment.status === 'ACTIVE' && sessionProgress(enrollment).remaining > 0"
               :to="`/student/sessions/book?enrollment=${enrollment.id}`"
@@ -151,6 +164,35 @@ function sessionProgress(enrollment: any) {
               class="flex-1"
             >
               {{ t('courses.viewDetails') }}
+            </UButton>
+            <UButton
+              v-if="enrollment.receiptUrl"
+              :to="enrollment.receiptUrl"
+              external
+              target="_blank"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-receipt-text"
+            >
+              {{ t('payments.receipt') }}
+            </UButton>
+            <UButton
+              :to="`/support?enrollment=${enrollment.id}`"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-life-buoy"
+            >
+              {{ t('support.getHelp') }}
+            </UButton>
+            <UButton
+              v-if="enrollment.paymentStatus === 'PAID'"
+              :to="`/support?enrollment=${enrollment.id}&type=refund`"
+              size="sm"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-rotate-ccw"
+            >
+              {{ t('support.requestRefund') }}
             </UButton>
           </div>
         </template>

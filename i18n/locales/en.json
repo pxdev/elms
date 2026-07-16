@@ -16,6 +16,9 @@
     "blog": "Blog",
     "blog": "Blog",
     "search": "Search..."
+    ,"menu": "Main menu"
+    ,"collapseSidebar": "Collapse sidebar"
+    ,"expandSidebar": "Expand sidebar"
   },
   "auth": {
     "email": "Email",
@@ -27,7 +30,9 @@
     "age": "Age",
     "confirmPassword": "Confirm password",
     "newPassword": "New password",
-    "forgotPassword": "Forgot password?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgotPasswordLink": "Forgot password?",
     "rememberedPassword": "Remembered your password?",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
@@ -53,7 +58,8 @@
       "invalid": "The verification link didn't work. It may have expired or already been used.",
       "resend": "Resend the email",
       "resendSent": "If the address is registered, a new link has been sent.",
-      "goToDashboard": "Go to dashboard"
+      "goToDashboard": "Go to dashboard",
+      "continue": "Continue"
     },
     "forgotPassword": {
       "title": "Reset your password",
@@ -67,7 +73,9 @@
       "submit": "Update password",
       "successTitle": "Password updated",
       "successDescription": "You can now sign in with your new password.",
-      "continue": "Continue to sign in"
+      "continue": "Continue to sign in",
+      "invalidTitle": "This reset link is invalid",
+      "invalidDescription": "Request a new password-reset link and try again."
     }
   },
   "fields": {
@@ -171,8 +179,17 @@
     "payAndEnroll": "Pay & Enroll",
     "enrolled": "Enrolled",
     "paymentSuccess": "Payment successful! Your enrollment is now active.",
+    "paymentPending": "Your payment is still being confirmed. Check My Enrollments in a moment.",
     "signInToEnroll": "Sign in to enroll",
     "notFound": "Course not found",
+    "outcomes": "What you'll achieve",
+    "outcomesHint": "One outcome per line",
+    "targetAudience": "Who this is for",
+    "prerequisites": "Prerequisites",
+    "refundPolicy": "Refund and cancellation policy",
+    "cancellationNotice": "Cancellation notice (hours)",
+    "minimumBookingNotice": "Minimum booking notice (hours)",
+    "bookingBuffer": "Buffer between sessions (minutes)",
     "empty": {
       "title": "No courses available",
       "description": "Check back later for new courses."
@@ -181,6 +198,7 @@
   "enrollments": {
     "title": "My Enrollments",
     "enrolledAt": "Enrolled",
+    "paidAt": "Paid",
     "status": {
       "PENDING": "Pending",
       "ACTIVE": "Active",
@@ -194,6 +212,8 @@
       "description": "Browse courses and enroll in one to get started."
     },
     "paymentSuccessTitle": "Payment successful"
+    ,"paymentProcessing": "Payment received — confirming your enrollment"
+    ,"paymentProcessingDescription": "This page updates automatically. It can take a few seconds for your course access to activate."
   },
   "portal": {
     "heroTitle": "Learn and grow with expert-led courses",
@@ -265,6 +285,17 @@
     "noAvailability": "Teacher has not set availability",
     "noSlots": "No available slots",
     "progress": "Session progress"
+    ,"backToEnrollments": "Back to enrollments"
+    ,"timeZoneNote": "Times are shown in your local time zone: {timeZone}"
+    ,"confirmBooking": "Confirm booking"
+    ,"noSessionsDescription": "Choose an active enrollment to book your first session."
+    ,"chooseEnrollment": "Choose an enrollment"
+    ,"reschedule": "Reschedule session"
+    ,"confirmReschedule": "Confirm new time"
+    ,"addToCalendar": "Add to calendar"
+    ,"addToGoogleCalendar": "Add to Google Calendar"
+    ,"addToOutlookCalendar": "Add to Outlook Calendar"
+    ,"cancelConfirm": "Cancel this session? Your session credit will become available again."
   },
   "lessons": {
     "title": "Lessons",
@@ -299,11 +330,31 @@
     }
   },
   "payments": {
+    "receipt": "Receipt",
     "status": {
       "PAID": "Paid",
       "REFUNDED": "Refunded",
       "PENDING": "Pending"
     }
+  },
+  "support": {
+    "title": "Support",
+    "description": "Send us a question about payment, course access, refunds, or sessions.",
+    "relatedEnrollment": "Related enrollment",
+    "general": "General question",
+    "subject": "Subject",
+    "message": "Message",
+    "submit": "Send request",
+    "sent": "Your support request has been received.",
+    "history": "Your requests",
+    "getHelp": "Get help"
+    ,"requestRefund": "Request refund"
+    ,"refundSubject": "Refund request"
+    ,"adminTitle": "Support requests"
+    ,"adminDescription": "Resolve student questions with enrollment and payment context."
+    ,"inProgress": "In progress"
+    ,"resolve": "Resolve"
+    ,"noRequests": "No support requests"
   },
   "errors": {
     "required": "{field} is required.",

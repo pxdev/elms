@@ -1,9 +1,10 @@
 import { forgotPasswordSchema } from '~~/shared/schemas'
 
 export default defineEventHandler(async (event) => {
+  enforceRateLimit(event, { max: 5, windowSeconds: 60 })
   const { email } = await parseBody(event, forgotPasswordSchema)
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } })
 
   // Always respond ok to avoid leaking which emails exist.
   if (!user) return { ok: true }

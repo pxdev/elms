@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
 
 async function handleOrderCreated(args: { lsOrderId: string, attrs: Record<string, unknown>, custom: Record<string, string> }) {
   const { lsOrderId, attrs, custom } = args
+  const urls = (attrs.urls ?? {}) as Record<string, unknown>
 
   // Idempotency check
   const existing = await prisma.enrollment.findUnique({ where: { lsOrderId } })
@@ -80,10 +81,11 @@ async function handleOrderCreated(args: { lsOrderId: string, attrs: Record<strin
         status: 'ACTIVE',
         lsOrderId,
         lsCustomerId: String(attrs.customer_id || ''),
-        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
+        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number),
         currency: String(attrs.currency || 'USD').toUpperCase(),
         paidAt: new Date(),
         paymentStatus: 'PAID',
+        receiptUrl: typeof urls.receipt === 'string' ? urls.receipt : null,
         promoCodeId: promoCodeId ?? null
       },
       create: {
@@ -92,10 +94,11 @@ async function handleOrderCreated(args: { lsOrderId: string, attrs: Record<strin
         status: 'ACTIVE',
         lsOrderId,
         lsCustomerId: String(attrs.customer_id || ''),
-        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number * 100),
+        amountCents: Math.round((attrs.total || attrs.subtotal || 0) as number),
         currency: String(attrs.currency || 'USD').toUpperCase(),
         paidAt: new Date(),
         paymentStatus: 'PAID',
+        receiptUrl: typeof urls.receipt === 'string' ? urls.receipt : null,
         promoCodeId: promoCodeId ?? null
       }
     })
@@ -123,7 +126,8 @@ async function handleOrderRefunded(args: { lsOrderId: string }) {
     where: { id: enrollment.id },
     data: {
       status: 'CANCELLED',
-      paymentStatus: 'REFUNDED'
+      paymentStatus: 'REFUNDED',
+      refundedAt: new Date()
     }
   })
 

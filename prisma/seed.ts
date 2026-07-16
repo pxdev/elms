@@ -39,24 +39,26 @@ async function main() {
   const teacherPassword = await hashPassword('teacher123')
   const teacher1 = await prisma.user.upsert({
     where: { email: 'teacher1@elms.local' },
-    update: {},
+    update: { timeZone: 'Asia/Riyadh', isAvailableForBooking: true },
     create: {
       email: 'teacher1@elms.local',
       name: 'Ahmed Hassan',
       passwordHash: teacherPassword,
       role: 'TEACHER',
+      timeZone: 'Asia/Riyadh',
       emailVerified: true,
       emailVerifiedAt: new Date()
     }
   })
   const teacher2 = await prisma.user.upsert({
     where: { email: 'teacher2@elms.local' },
-    update: {},
+    update: { timeZone: 'Asia/Riyadh', isAvailableForBooking: true },
     create: {
       email: 'teacher2@elms.local',
       name: 'Sara Ali',
       passwordHash: teacherPassword,
       role: 'TEACHER',
+      timeZone: 'Asia/Riyadh',
       emailVerified: true,
       emailVerifiedAt: new Date()
     }
@@ -88,64 +90,75 @@ async function main() {
     {
       name: 'Introduction to Arabic',
       description: 'Learn the basics of Arabic language including alphabet, pronunciation, and simple conversations.',
+      outcomes: 'Read and write the Arabic alphabet\nIntroduce yourself and handle everyday greetings\nBuild simple present-tense sentences',
+      prerequisites: 'No prior Arabic experience required.',
+      targetAudience: 'Complete beginners who want live, guided practice.',
+      refundPolicy: 'Request a refund through Support before your first session, or reschedule any session at least 24 hours in advance.',
       imageUrl: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=800&q=80',
       teacherId: teacher1.id,
-      variants: [
-        { name: 'Basic Plan', sessionsPerMonth: 4, price: 49.99 },
-        { name: 'Standard Plan', sessionsPerMonth: 8, price: 89.99 },
-        { name: 'Intensive Plan', sessionsPerMonth: 12, price: 129.99 }
-      ]
+      price: 49.99,
+      totalSessions: 4,
+      lsVariantId: 'demo-arabic-variant'
     },
     {
       name: 'Quranic Arabic',
       description: 'Deep dive into Quranic vocabulary, grammar, and tafsir fundamentals.',
+      outcomes: 'Recognize high-frequency Quranic vocabulary\nAnalyze foundational sentence structures\nUse grammar tools while reading selected passages',
+      prerequisites: 'Comfort reading the Arabic alphabet.',
+      targetAudience: 'Learners seeking a structured introduction to Quranic Arabic.',
+      refundPolicy: 'Request a refund through Support before your first session, or reschedule any session at least 24 hours in advance.',
       imageUrl: 'https://images.unsplash.com/photo-1564121211835-e88c852648ab?w=800&q=80',
       teacherId: teacher1.id,
-      variants: [
-        { name: 'Self-Paced', sessionsPerMonth: 4, price: 59.99 },
-        { name: 'Guided Study', sessionsPerMonth: 8, price: 99.99 }
-      ]
+      price: 59.99,
+      totalSessions: 8,
+      lsVariantId: 'demo-quranic-variant'
     },
     {
       name: 'Advanced Conversation',
       description: 'Master fluency through immersive conversation practice with native speakers.',
+      outcomes: 'Speak more confidently in extended conversations\nUse natural expressions and transitions\nReceive personalized pronunciation feedback',
+      prerequisites: 'Intermediate spoken Arabic or equivalent experience.',
+      targetAudience: 'Intermediate learners ready for conversation-first coaching.',
+      refundPolicy: 'Request a refund through Support before your first session, or reschedule any session at least 24 hours in advance.',
       imageUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
       teacherId: teacher2.id,
-      variants: [
-        { name: 'Weekly Sessions', sessionsPerMonth: 4, price: 69.99 },
-        { name: 'Bi-Weekly Sessions', sessionsPerMonth: 8, price: 119.99 },
-        { name: 'Daily Immersion', sessionsPerMonth: 20, price: 249.99 }
-      ]
+      price: 69.99,
+      totalSessions: 4,
+      lsVariantId: 'demo-conversation-variant'
     }
   ]
 
   for (const courseData of coursesData) {
-    const { variants, ...courseFields } = courseData
+    const existing = await prisma.course.findFirst({ where: { name: courseData.name } })
+    const course = existing
+      ? await prisma.course.update({ where: { id: existing.id }, data: { ...courseData, isActive: true } })
+      : await prisma.course.create({ data: { ...courseData, isActive: true } })
+    console.log(`Course: ${course.name}`)
 
-    const existing = await prisma.course.findFirst({ where: { name: courseFields.name } })
-    const course = existing || await prisma.course.create({
-      data: {
-        ...courseFields,
-        isActive: true
-      }
-    })
-
-    for (const variantData of variants) {
-      const existingVariant = await prisma.courseVariant.findFirst({
-        where: { courseId: course.id, name: variantData.name }
+    if (course.name === 'Introduction to Arabic') {
+      await prisma.enrollment.upsert({
+        where: { userId_courseId: { userId: students[0]!.id, courseId: course.id } },
+        update: { status: 'ACTIVE', paymentStatus: 'PAID', amountCents: 4999, currency: 'USD' },
+        create: {
+          userId: students[0]!.id,
+          courseId: course.id,
+          status: 'ACTIVE',
+          paymentStatus: 'PAID',
+          amountCents: 4999,
+          currency: 'USD',
+          paidAt: new Date()
+        }
       })
-      if (!existingVariant) {
-        await prisma.courseVariant.create({
-          data: {
-            ...variantData,
-            courseId: course.id,
-            isActive: true
-          }
-        })
-      }
     }
-    console.log(`Course: ${course.name} (${variants.length} variants)`)
   }
+
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const date = tomorrow.toISOString().slice(0, 10)
+  await prisma.teacherAvailability.deleteMany({ where: { teacherId: teacher1.id, date } })
+  await prisma.teacherAvailability.create({
+    data: { teacherId: teacher1.id, date, startTime: 9 * 60, endTime: 15 * 60 }
+  })
 
   console.log('Seeding complete.')
 }
