@@ -3,6 +3,7 @@ import { useEventListener } from '@vueuse/core'
 import { format, addDays, addMonths, isAfter, isSameDay, parseISO } from 'date-fns'
 
 const { t } = useI18n()
+const toast = useToast()
 
 definePageMeta({ authorize: ['TEACHER', 'ADMIN'] })
 
@@ -270,8 +271,13 @@ const save = useThrottleFn(async () => {
       body: { slots }
     })
     await Promise.all([refreshWeek(), refreshAll()])
+    toast.add({ title: t('common.saved'), color: 'success' })
   } catch (err: any) {
-    alert(err.message || 'Failed to save')
+    toast.add({
+      title: 'Failed to save availability',
+      description: err.data?.message || err.message,
+      color: 'error'
+    })
   } finally {
     saving.value = false
   }
